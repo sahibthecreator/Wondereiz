@@ -25,6 +25,7 @@ export default function App() {
   const ref = collection(db, "User");
   const q = query(ref, where("name", "==", "Jhon"));
 
+
   onSnapshot(q, (snapshot) => {
     let users = [];
     snapshot.docs.forEach((doc) => {

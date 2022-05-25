@@ -1,34 +1,151 @@
-import React, { Component } from "react";
-import { Button, View, Text, StyleSheet } from "react-native";
+import React, { Component, useState } from "react";
+import {
+  Button,
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+} from "react-native";
+import { TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
+import { app } from "../Config";
 
 export default function Login(props) {
-  return( 
-    <SafeAreaView>
-        <Text>Hello, this is login page</Text>
-        <Button
-              title="Navigate"
-              onPress={() => props.navigation.navigate('Register')}
-              color="#5219ac"
-            />
-    </SafeAreaView>
+  var [ email, setEmail ] = useState("");
+  var [ password, setPassword ] = useState("");
+
+  
+  function SignIn(){
+    app.auth()
+   .signInWithEmailAndPassword(email, password)
+   .then(user => {
+    //once we are logged in , we move to the home screen
+    //this.props.navgation.navigate("Home", { user });
+    alert('success!!');
+   })
+   .catch(err => {
+    alert(err.message);
+   });
+  }
+
+  return (
+    <LinearGradient colors={["#441B55", "#b61fb5"]} style={styles.background}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.form}>
+          <Text style={styles.caption}>Sign In</Text>
+            <View style={styles.sectionStyle}>
+              <Image
+                source={{
+                  uri: "https://img.icons8.com/material-rounded/90/000000/user.png",
+                }}
+                style={styles.imageStyle}
+              />
+              <TextInput placeholder="E-mail or Username" onChangeText={(email) => setEmail(email)} value={email} style={styles.input} />
+            </View>
+            
+            <View style={styles.sectionStyle}>
+              <Image
+                source={{
+                  uri: "https://img.icons8.com/ios-glyphs/90/000000/lock--v1.png",
+                }}
+                style={styles.imageStyle}
+              />
+              <TextInput placeholder="Password" onChangeText={(password) => setPassword(password)} value={password} style={styles.input} />
+            </View>
+          <TouchableOpacity
+            style={styles.loginBtn}
+            //onPress={() => navigate("HomeScreen")}
+            onPress={() => {
+              SignIn(); 
+           }} 
+            underlayColor="#fff"
+          >
+            <Text style={styles.loginText}>Login</Text>
+          </TouchableOpacity>
+          <Text style={styles.forgetPassText} onPress={() => props.navigation.navigate('ForgetPassword')} >Forgot your password? </Text>
+        </View>
+        <Image style={styles.bgImage} source={require('../assets/world.png')} />
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
-  input: {
-    width: "80%",
-    marginTop: 25,
-    padding: 12,
-    fontSize: 18,
-    borderWidth: 0.2,
-    borderRadius: 10,
-    borderColor: "gray",
+  background: {
+    width: "100%",
+    height: "100%",
+    position: "relative",
   },
+  form: {
+    alignItems: "center",
+    backgroundColor: "white",
+    width: "80%",
+    borderRadius: 20,
+  },
+  caption: {
+    fontWeight: "bold",
+    fontSize: 25,
+    color: "#8736AA",
+    marginTop: 30,
+  },
+  inputBox: {
+    width: "80%",
+    alignItems: "flex-start",
+    marginTop: 15,
+  },
+  input: {
+    flex: 1,
+    backgroundColor: "#dadada",
+    width: "100%",
+    padding: 9,
+    borderRadius: 10,
+  },
+  loginBtn: {
+    backgroundColor: "#d50ebc",
+    marginTop: 20,
+    padding: 10,
+    paddingHorizontal: 25,
+    borderRadius: 17,
+  },
+  loginText: {
+    color: "white",
+    fontSize: 15,
+  },
+  forgetPassText: {
+    color: "#8936aa",
+    marginTop: 10,
+    marginBottom: 15,
+    textDecorationLine: "underline",
+  },
+
+  sectionStyle: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: "#dadada",
+    height: 40,
+    width: '80%',
+    borderRadius: 10,
+    margin: 10,
+  },
+  imageStyle: {
+    padding: 10,
+    margin: 5,
+    height: 25,
+    width: 25,
+    resizeMode: 'stretch',
+    alignItems: 'center',
+  },
+  bgImage:{
+    position:"absolute",
+    bottom: 0,
+    right: 0
+  }
 });
