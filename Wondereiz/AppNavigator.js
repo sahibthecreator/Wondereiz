@@ -4,6 +4,8 @@ import React, { Component } from "react";
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import ForgetPasswordScreen from './screens/ForgetPasswordScreen';
+import HomeScreen from './screens/HomeScreen';
+
 
 
 const {Navigator, Screen} = createStackNavigator();
@@ -14,6 +16,7 @@ const AppNavigator = () => (
             <Screen name="Login" component={LoginScreen} />
             <Screen name="Register" component={RegisterScreen} />
             <Screen name="ForgetPassword" component={ForgetPasswordScreen} />
+            <Screen name="Home" component={HomeScreen} />
         </Navigator>
     </NavigationContainer>
 );

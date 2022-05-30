@@ -14,28 +14,45 @@ import { app } from "../Config";
 
 export default function ForgetPassword(props) {
   var [email, setEmail] = useState("");
+  var [error, setError] = useState("");
+  var [successMsg, setsuccessMsg] = useState("");
 
   const forgotPassword = () => {
     app
       .auth()
       .sendPasswordResetEmail(email)
       .then(function (user) {
-        alert("Please check your email...");
+        styles.errorMsg={color:'green', fontWeight: "bold",}
+        setError("Please check your email");
       })
       .catch(function (e) {
-        console.log(e);
+        styles.errorMsg={color:'red', fontWeight: "bold",}
+        switch (e.code) {
+          case "auth/invalid-email":
+            setError("Invalid email");
+            break;
+          case "auth/user-not-found":
+            setError("No such user registered");
+            break;
+          case "auth/missing-email":
+            setError("Please enter your email");
+            break;
+        }
       });
   };
 
   return (
     <LinearGradient colors={["#441B55", "#b61fb5"]} style={styles.background}>
       <SafeAreaView style={styles.container}>
-        <TouchableOpacity onPress={() => props.navigation.navigate("Login")} style={styles.backBtn}>
+        <TouchableOpacity
+          onPress={() => props.navigation.navigate("Login")}
+          style={styles.backBtn}
+        >
           <Image
             source={{
               uri: "https://img.icons8.com/ios-filled/100/FFFFFF/left.png",
             }}
-            style={{flex:1}}
+            style={{ flex: 1 }}
           />
         </TouchableOpacity>
         <View style={styles.form}>
@@ -62,6 +79,7 @@ export default function ForgetPassword(props) {
               style={styles.input}
             />
           </View>
+          <Text style={styles.errorMsg}>{error}</Text>
 
           <TouchableOpacity
             style={styles.loginBtn}
@@ -166,5 +184,9 @@ const styles = StyleSheet.create({
     marginHorizontal: "15%",
     marginVertical: 5,
     fontFamily: "Futura",
+  },
+  errorMsg: {
+    color: "red",
+    fontWeight: "bold",
   },
 });

@@ -10,24 +10,40 @@ import {
 import { TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
+import { onAuthStateChanged } from "firebase/auth";
 import { app } from "../Config";
 
 export default function Login(props) {
-  var [ email, setEmail ] = useState("");
-  var [ password, setPassword ] = useState("");
+  var [email, setEmail] = useState("");
+  var [password, setPassword] = useState("");
+  var [error, setError] = useState("");
 
-  
-  function SignIn(){
-    app.auth()
-   .signInWithEmailAndPassword(email, password)
-   .then(user => {
-    //once we are logged in , we move to the home screen
-    //this.props.navgation.navigate("Home", { user });
-    alert('success!!');
-   })
-   .catch(err => {
-    alert(err.message);
-   });
+  onAuthStateChanged(app.auth(), (user) => {
+    if (user) {
+      //props.navigation.navigate("Home", { user });
+    }
+  });
+
+  function SignIn() {
+    app
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then((user) => {
+        this.props.navigation.navigate("Home", { user });
+      })
+      .catch((err) => {
+        switch (err.code) {
+          case "auth/invalid-email":
+            setError("Invalid email");
+            break;
+          case "auth/wrong-password" || "auth/internal-error":
+            setError("Invalid password");
+            break;
+          case "auth/user-not-found":
+            setError("No such user registered");
+            break;
+        }
+      });
   }
 
   return (
@@ -35,38 +51,54 @@ export default function Login(props) {
       <SafeAreaView style={styles.container}>
         <View style={styles.form}>
           <Text style={styles.caption}>Sign In</Text>
-            <View style={styles.sectionStyle}>
-              <Image
-                source={{
-                  uri: "https://img.icons8.com/material-rounded/90/000000/user.png",
-                }}
-                style={styles.imageStyle}
-              />
-              <TextInput placeholder="E-mail or Username" onChangeText={(email) => setEmail(email)} value={email} style={styles.input} />
-            </View>
-            
-            <View style={styles.sectionStyle}>
-              <Image
-                source={{
-                  uri: "https://img.icons8.com/ios-glyphs/90/000000/lock--v1.png",
-                }}
-                style={styles.imageStyle}
-              />
-              <TextInput placeholder="Password" onChangeText={(password) => setPassword(password)} value={password} style={styles.input} />
-            </View>
+          <View style={styles.sectionStyle}>
+            <Image
+              source={{
+                uri: "https://img.icons8.com/material-rounded/90/000000/user.png",
+              }}
+              style={styles.imageStyle}
+            />
+            <TextInput
+              placeholder="E-mail or Username"
+              onChangeText={(email) => setEmail(email)}
+              value={email}
+              style={styles.input}
+            />
+          </View>
+
+          <View style={styles.sectionStyle}>
+            <Image
+              source={{
+                uri: "https://img.icons8.com/ios-glyphs/90/000000/lock--v1.png",
+              }}
+              style={styles.imageStyle}
+            />
+            <TextInput
+              placeholder="Password"
+              onChangeText={(password) => setPassword(password)}
+              value={password}
+              style={styles.input}
+            />
+          </View>
+          <Text style={styles.errorMsg}>{error}</Text>
           <TouchableOpacity
             style={styles.loginBtn}
             //onPress={() => navigate("HomeScreen")}
             onPress={() => {
-              SignIn(); 
-           }} 
+              SignIn();
+            }}
             underlayColor="#fff"
           >
             <Text style={styles.loginText}>Login</Text>
           </TouchableOpacity>
-          <Text style={styles.forgetPassText} onPress={() => props.navigation.navigate('ForgetPassword')} >Forgot your password? </Text>
+          <Text
+            style={styles.forgetPassText}
+            onPress={() => props.navigation.navigate("ForgetPassword")}
+          >
+            Forgot your password?{" "}
+          </Text>
         </View>
-        <Image style={styles.bgImage} source={require('../assets/world.png')} />
+        <Image style={styles.bgImage} source={require("../assets/world.png")} />
       </SafeAreaView>
     </LinearGradient>
   );
@@ -126,12 +158,12 @@ const styles = StyleSheet.create({
   },
 
   sectionStyle: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#dadada",
     height: 40,
-    width: '80%',
+    width: "80%",
     borderRadius: 10,
     margin: 10,
   },
@@ -140,12 +172,16 @@ const styles = StyleSheet.create({
     margin: 5,
     height: 25,
     width: 25,
-    resizeMode: 'stretch',
-    alignItems: 'center',
+    resizeMode: "stretch",
+    alignItems: "center",
   },
-  bgImage:{
-    position:"absolute",
+  bgImage: {
+    position: "absolute",
     bottom: 0,
-    right: 0
-  }
+    right: 0,
+  },
+  errorMsg: {
+    color: "red",
+    fontWeight: "bold",
+  },
 });
