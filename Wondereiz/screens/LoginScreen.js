@@ -29,7 +29,7 @@ export default function Login(props) {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then((user) => {
-        this.props.navigation.navigate("Home", { user });
+        props.navigation.navigate("Home", { user });
       })
       .catch((err) => {
         switch (err.code) {
