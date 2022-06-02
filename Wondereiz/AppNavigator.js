@@ -5,6 +5,7 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import ForgetPasswordScreen from './screens/ForgetPasswordScreen';
 import HomeScreen from './screens/HomeScreen';
+import GroupInfoScreen from "./screens/GroupInfoScreen";
 
 
 
@@ -17,6 +18,7 @@ const AppNavigator = () => (
             <Screen name="Register" component={RegisterScreen} />
             <Screen name="ForgetPassword" component={ForgetPasswordScreen} />
             <Screen name="Home" component={HomeScreen} />
+            <Screen name="GroupInfoScreen" component={GroupInfoScreen} />
         </Navigator>
     </NavigationContainer>
 );
