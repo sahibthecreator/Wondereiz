@@ -49,7 +49,7 @@ const BottomTabs = (props) => {
         />
       </TouchableOpacity>
       <TouchableOpacity 
-          onPress={() => props.navigation.navigate("Home")} >
+          onPress={() => props.navigation.navigate("GroupInfoScreen")} >
         <Image
           source={{
             uri: icons.Notification.active,

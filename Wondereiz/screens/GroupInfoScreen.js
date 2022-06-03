@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, SafeAreaView, StyleSheet } from "react-native";
 
-export default function GroupInfoScreen() {
+export default function GroupInfoScreen(props) {
   return (
     <SafeAreaView style={styles.container}>
         <Text>Infoooo</Text>

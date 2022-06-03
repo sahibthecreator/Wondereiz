@@ -15,7 +15,7 @@ export default function Home(props) {
           <Post post={post} key={index} />
         ))}
       </ScrollView>
-      <BottomTabs></BottomTabs>
+      <BottomTabs navigation={props.navigation}></BottomTabs>
     </SafeAreaView>
   );
 }
