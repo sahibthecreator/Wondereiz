@@ -55,7 +55,7 @@ export default function GroupInfoScreen(props) {
           </Text> 
           
           <View style={styles.partecipants}>
-            
+             
           </View>
       </ScrollView>
     </SafeAreaView>
