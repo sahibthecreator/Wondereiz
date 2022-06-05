@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, SafeAreaView, StyleSheet } from "react-native";
 import { ScrollView } from "react-native";
 import Post from "../components/Post";
 import Header from "../components/Header";
 import { TRIPSINFO } from "../data/TripsInfo";
 import BottomTabs from "../components/BottomTabs";
+
+
 
 export default function Home(props) {
   return (
