@@ -1,25 +1,30 @@
 import firebase from "firebase/compat/app";
-import "firebase/firestore";
-import { collection, orderBy } from "firebase/firestore";
+//import { firebase } from '@firebase/app';
+import "firebase/compat/firestore";
+//import "firebase/firestore";
+import { addDoc, collection, limit, orderBy, query } from "firebase/firestore";
 require("firebase/auth");
 import { app } from "../Config";
 import { db } from "../Config";
 import { TextInput } from "react-native-gesture-handler";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { useState } from "react/cjs/react.production.min";
 import { getAuth, signInWithPopup } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { StyleSheet } from "react-native";
+import { Button, StyleSheet, View, Text } from "react-native";
+import { useState } from "react";
 
 export default function Chat(props) {
   const auth = getAuth(app);
   const [user] = useAuthState(auth);
 
   const messagesRef = collection(db, "/Messages");
-  const query = orderBy("createdAt");
 
-  const [messages] = useCollectionData(query, { idField: "id" });
+  const [messages, loadingMessages, error] = useCollectionData(
+    query(messagesRef, orderBy("createdAt"), limit(25)),
+    {
+      idField: "id",
+    }
+  );
 
   const [formValue, setFormValue] = useState("");
 
@@ -28,11 +33,13 @@ export default function Chat(props) {
 
     const { uid } = auth.currentUser;
 
-    await messagesRef.add({
+    await addDoc(messagesRef, {
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       text: formValue,
       uid,
     });
+
+    setFormValue("");
   };
 
   function ChatMessage(props) {
@@ -47,6 +54,9 @@ export default function Chat(props) {
     );
   }
 
+  //console.log(messages);
+  //console.log(firebase.firestore.FieldValue.serverTimestamp());
+
   return (
     <>
       <View>
@@ -57,7 +67,7 @@ export default function Chat(props) {
         <TextInput
           style={styles.input}
           placeholder="Your message..."
-          onChange={(formValue) => setFormValue(formValue)}
+          onChangeText={(formValue) => setFormValue(formValue)}
           value={formValue}
         />
         <Button title="Send" onPress={sendMessage} />
