@@ -20,41 +20,23 @@ export default function Home(props) {
   var [trip_picture, setTripPicture] = useState([]);
 
   const ref = collection(db, "Room", "Room1", "rooms");
-  const q = query(ref, where('trip', '==', ''));
+  const q = query(ref, where('trip', '==', "Emmen-Eindhoven"));
 
 
   onSnapshot(q, (snapshot) => {
     let rooms = [];
     snapshot.docs.forEach((doc) => {
-      rooms.push(doc.data());
+      trip.push(doc.data());
     });
     console.log(rooms);
   });
-
-
-  const Read = () => {
-    const myDoc = doc(db, "Room", "Room1", "rooms");
-
-    getDoc(myDoc)
-      //handling promises
-      .then((snapshot) => {
-        if (snapshot.exists) {
-          setTrip(snapshot.data());
-        } else {
-          alert("No data");
-        }
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  };
 
 
   return (
     <SafeAreaView style={styles.container}>
       <Header />
       <ScrollView>
-        {trip?.map((post, index) => (
+        {trip.map((post, index) => (
           <Post post={post} key={index} />
         ))}
       </ScrollView>

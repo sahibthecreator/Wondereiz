@@ -1,7 +1,34 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
+import { db } from "../Config"
 
 export default function GroupInfoScreen(props) {
+
+  const [partecipantsList, setPartecipantsList] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const getPartecipants = async () => {
+    try {
+      const list = [];
+      var snapshot = await Firebase.firestore().collection(db, "User").get();
+      console.log("Here");
+      snapshot.forEach((doc) => {
+        list.push(doc.data());
+      });
+      setPartecipantsList([list]);;
+    } catch (e) {
+      setErrorMessage(
+        "There's no partecipants!"
+      );
+    }
+  };
+
+  //Call when component is rendered
+  useEffect(() => {
+    getPartecipants();
+  }, []);
+
+  
   return (
     <SafeAreaView style={styles.container}>
         <View>
@@ -55,7 +82,7 @@ export default function GroupInfoScreen(props) {
           </Text> 
           
           <View style={styles.partecipants}>
-             
+            {partecipantsList}
           </View>
       </ScrollView>
     </SafeAreaView>
@@ -96,8 +123,7 @@ const styles = StyleSheet.create({
   partecipants: {
       top: 0,
       margin: 30,
-      paddingTop: 335,
-      paddingBottom: 15,
+      padding: 150,
       borderRadius: 30,
       backgroundColor: "white",
       shadowColor: "#000",
