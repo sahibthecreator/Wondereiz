@@ -15,7 +15,7 @@ import { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import AppNavigator from "./AppNavigator";
 //using DB reference
-import { db } from "./Config";
+import { app, db } from "./Config";
 
 export default function App() {
   var [userDoc, setUserDoc] = useState(null);

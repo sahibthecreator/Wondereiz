@@ -5,6 +5,7 @@ import Post from "../components/Post";
 import Header from "../components/Header";
 import { TRIPSINFO } from "../data/TripsInfo";
 import BottomTabs from "../components/BottomTabs";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function Home(props) {
   return (
@@ -15,7 +16,10 @@ export default function Home(props) {
           <Post post={post} key={index} />
         ))}
       </ScrollView>
-      <BottomTabs></BottomTabs>
+      <TouchableOpacity>
+        <Text>Hello</Text>
+      </TouchableOpacity>
+      <BottomTabs navigation={props.navigation} ></BottomTabs>
     </SafeAreaView>
   );
 }

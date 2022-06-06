@@ -24,7 +24,7 @@ const icons = {
 const BottomTabs = (props) => {
   return (
     <View style={styles.container}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => props.navigation.navigate("Home")}>
         <Image
           source={{
             uri: icons.Home.active,
@@ -40,7 +40,7 @@ const BottomTabs = (props) => {
           style={styles.icon}
         />
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => props.navigation.navigate("MyTrips")}>
         <Image
           source={{
             uri: icons.Trips.active,
@@ -49,7 +49,7 @@ const BottomTabs = (props) => {
         />
       </TouchableOpacity>
       <TouchableOpacity 
-          onPress={() => props.navigation.navigate("Home")} >
+          onPress={() => props.navigation.navigate("GroupInfoScreen")} >
         <Image
           source={{
             uri: icons.Notification.active,
@@ -73,10 +73,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     justifyContent: "space-around",
+    width: '100%',
     height: 70,
     paddingTop: 12,
     backgroundColor: "#D50FBC",
     marginBottom: -35,
+    position: 'absolute',
+    bottom: 35,
   },
   icon: {
     width: 30,

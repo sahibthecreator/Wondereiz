@@ -20,7 +20,7 @@ export default function Login(props) {
 
   onAuthStateChanged(app.auth(), (user) => {
     if (user) {
-      //props.navigation.navigate("Home", { user });
+      props.navigation.navigate("Home", { user });
     }
   });
 
@@ -49,6 +49,24 @@ export default function Login(props) {
   return (
     <LinearGradient colors={["#441B55", "#b61fb5"]} style={styles.background}>
       <SafeAreaView style={styles.container}>
+      <TouchableOpacity
+          onPress={() => props.navigation.navigate("Welcome")}
+          style={styles.backBtn}
+        >
+          <Image
+            source={{
+              uri: "https://img.icons8.com/ios-filled/100/FFFFFF/left.png",
+            }}
+            style={{ flex: 1 }}
+          />
+        </TouchableOpacity>
+        <Text style={{fontSize: 20,fontWeight:"900", color: 'white', padding:30}}
+        onPress={() => {
+          setEmail('test@gmail.com');
+          setPassword('qwerty');
+          SignIn();
+        }}
+         >Fast Login</Text>
         <View style={styles.form}>
           <Text style={styles.caption}>Sign In</Text>
           <View style={styles.sectionStyle}>
@@ -114,6 +132,13 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     position: "relative",
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    position: "absolute",
+    top: 40,
+    left: 15,
   },
   form: {
     alignItems: "center",

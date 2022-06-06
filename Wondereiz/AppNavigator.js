@@ -5,19 +5,23 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import ForgetPasswordScreen from './screens/ForgetPasswordScreen';
 import HomeScreen from './screens/HomeScreen';
+import BottomTabs from "./components/BottomTabs";
 import GroupInfoScreen from "./screens/GroupInfoScreen";
-
+import WelcomeScreen from "./screens/WelcomeScreen";
+import MyTripsScreen from './screens/MyTripsScreen'
 
 
 const {Navigator, Screen} = createStackNavigator();
 
 const AppNavigator = () => (
     <NavigationContainer>
-        <Navigator screenOptions={{ headerShown: false }} initialRouteName="Login">
+        <Navigator screenOptions={{ headerShown: false }} initialRouteName="Welcome">
+            <Screen name="Welcome" component={WelcomeScreen} />
             <Screen name="Login" component={LoginScreen} />
             <Screen name="Register" component={RegisterScreen} />
             <Screen name="ForgetPassword" component={ForgetPasswordScreen} />
             <Screen name="Home" component={HomeScreen} />
+            <Screen name="MyTrips" component={MyTripsScreen} />
             <Screen name="GroupInfoScreen" component={GroupInfoScreen} />
         </Navigator>
     </NavigationContainer>
