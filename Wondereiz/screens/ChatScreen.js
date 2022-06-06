@@ -10,8 +10,9 @@ import { TextInput } from "react-native-gesture-handler";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { getAuth, signInWithPopup } from "firebase/auth";
-import { Button, StyleSheet, View, Text } from "react-native";
-import { useState } from "react";
+import { Button, StyleSheet, View, TouchableOpacity, Text } from "react-native";
+import React, { useState } from "react";
+//import React from "react";
 
 export default function Chat(props) {
   const auth = getAuth(app);
@@ -20,7 +21,7 @@ export default function Chat(props) {
   const messagesRef = collection(db, "/Messages");
 
   const [messages, loadingMessages, error] = useCollectionData(
-    query(messagesRef, orderBy("createdAt"), limit(25)),
+    query(messagesRef, orderBy("createdAt"), limit(100)),
     {
       idField: "id",
     }
@@ -29,26 +30,35 @@ export default function Chat(props) {
   const [formValue, setFormValue] = useState("");
 
   const sendMessage = async (e) => {
-    e.preventDefault();
+    if (formValue.trim() != "") {
+      e.preventDefault();
 
-    const { uid } = auth.currentUser;
+      const { uid } = auth.currentUser;
 
-    await addDoc(messagesRef, {
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      text: formValue,
-      uid,
-    });
+      await addDoc(messagesRef, {
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        text: formValue,
+        uid,
+      });
 
-    setFormValue("");
+      setFormValue("");
+    } else {
+      alert("Can't send empty message!");
+    }
   };
 
   function ChatMessage(props) {
     const { text, uid } = props.message;
 
     const messageClass = uid === auth.currentUser.uid ? "sent" : "received";
-
+    //<View style={`message ${messageClass}`}>
     return (
-      <View style={`message ${messageClass}`}>
+      <View
+        style={[
+          styles.message,
+          messageClass == "sent" ? styles.sent : styles.message,
+        ]}
+      >
         <Text>{text}</Text>
       </View>
     );
@@ -61,12 +71,14 @@ export default function Chat(props) {
     <>
       <View>
         {messages &&
-          messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
+          messages.map((msg, msgIndex) => (
+            <ChatMessage key={msgIndex} message={msg} />
+          ))}
       </View>
       <View>
         <TextInput
           style={styles.input}
-          placeholder="Your message..."
+          placeholder="Write a message..."
           onChangeText={(formValue) => setFormValue(formValue)}
           value={formValue}
         />
@@ -83,14 +95,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  Text: {
-    color: "white",
+  messageText: {
+    color: "red",
   },
-  input: {
-    borderWidth: 1,
-    borderColor: "#777",
-    padding: 8,
-    margin: 10,
-    width: 250,
+  message: {
+    display: "flex",
+    alignItems: "flex-start",
+  },
+  sent: {
+    flexDirection: "row-reverse",
+  },
+  sentText: {
+    color: "white",
+    backgroundColor: "#0b93f6",
+    alignSelf: "flex-end",
+  },
+  receivedText: {
+    backgroundColor: "e5e5ea",
+    color: "black",
   },
 });
