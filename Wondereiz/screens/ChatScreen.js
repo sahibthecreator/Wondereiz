@@ -10,7 +10,15 @@ import { TextInput } from "react-native-gesture-handler";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { getAuth, signInWithPopup } from "firebase/auth";
-import { Button, StyleSheet, View, TouchableOpacity, Text } from "react-native";
+import {
+  Button,
+  Image,
+  StyleSheet,
+  SafeAreaView,
+  View,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import React, { useState } from "react";
 //import React from "react";
 
@@ -59,7 +67,11 @@ export default function Chat(props) {
           messageClass == "sent" ? styles.sent : styles.message,
         ]}
       >
-        <Text>{text}</Text>
+        <Text
+          style={messageClass == "sent" ? styles.sentText : styles.receivedText}
+        >
+          {text}
+        </Text>
       </View>
     );
   }
@@ -68,31 +80,31 @@ export default function Chat(props) {
   //console.log(firebase.firestore.FieldValue.serverTimestamp());
 
   return (
-    <>
+    <SafeAreaView style={styles.container}>
       <View>
         {messages &&
           messages.map((msg, msgIndex) => (
             <ChatMessage key={msgIndex} message={msg} />
           ))}
       </View>
-      <View>
+      <View style={styles.formText}>
         <TextInput
-          style={styles.input}
           placeholder="Write a message..."
           onChangeText={(formValue) => setFormValue(formValue)}
           value={formValue}
         />
-        <Button title="Send" onPress={sendMessage} />
+        <TouchableOpacity style={styles.messageButton} onPress={sendMessage}>
+          <Image source={{ uri: "../assets/icons8-paper-plane-24.png" }} />
+        </TouchableOpacity>
       </View>
-    </>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //backgroundColor: "black",
-    alignItems: "center",
+    //alignItems: "center",
     justifyContent: "center",
   },
   messageText: {
@@ -113,5 +125,11 @@ const styles = StyleSheet.create({
   receivedText: {
     backgroundColor: "e5e5ea",
     color: "black",
+  },
+  formText: {
+    //marginTop: "auto",
+  },
+  messageButton: {
+    alignItems: "flex-end",
   },
 });
