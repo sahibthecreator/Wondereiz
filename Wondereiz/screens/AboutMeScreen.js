@@ -29,8 +29,27 @@ export default function AboutMe(props) {
       setError("Bio lenght must be over 15 characters.");
     }
     else {
-      // do something
+      Create();
+      props.navigation.navigate("Home");
     }
+  }
+
+  function Create() {
+    const myDoc = doc(db, "User", userUid);
+
+    let docData = {
+      name: {preference},
+      bio: {bio},
+    };
+
+    setDoc(myDoc, docData)
+      //handling promises
+      .then(() => {
+        alert("Profile created");
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   }
 
   return(
