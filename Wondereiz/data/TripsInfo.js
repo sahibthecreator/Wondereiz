@@ -1,4 +1,4 @@
-import { TRIPS } from "../data/Trips";
+/*import { TRIPS } from "../data/Trips";
 export const TRIPSINFO = [
     {
         trip_picture: TRIPS[0].image,
@@ -10,5 +10,5 @@ export const TRIPSINFO = [
         trip: TRIPS[1].trip,
         caption: '15 June 2022'
     }
-]
+]*/
 

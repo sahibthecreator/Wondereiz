@@ -1,15 +1,19 @@
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
+import { app, db} from "../Config";
+import { doc, setDoc } from "firebase/firestore";
 
 const tripLikeIcon = [
   {
     name: "Like",
     imageUrl: "https://img.icons8.com/small/60/D50FBC/hearts.png",
-    imageLikedUrl: "https://img.icons8.com/ios-filled/50/D50FBC/hearts.png",
+    imageLikedUrl: "https://img.icons8.com/material/60/D50FBC/like--v1.png",
   },
 ];
 
 const Post = ({ post }) => {
+  
   return (
     <View style={{ marginBottom: 5 }}>
       <PostHeader post={post} />
@@ -79,11 +83,41 @@ const PostLike = () => (
   <Icon imgStyle={styles.likeIcon} imageUrl={tripLikeIcon[0].imageUrl} />
 );
 
-const Icon = ({ imgStyle, imageUrl }) => (
-  <TouchableOpacity >
-    <Image style={imgStyle} source={{ uri: imageUrl }} />
-  </TouchableOpacity>
-);
+/*const PostLiked = () => (
+  <Icon imgStyle={styles.likeIcon} imageUrl={tripLikeIcon[0].imageLikedUrl} />
+);*/
+
+
+const Icon = ({ imgStyle, imageUrl }) => {
+  const userUid = app.auth().currentUser.uid;
+  let [savedRoom, setSavedRoom] = useState("");
+  
+
+  function Create() {
+    const myDoc = doc(db, "User", userUid);
+  
+    let docData = {
+      savedRoomsId: {savedRoom}
+    };
+  
+    setDoc(myDoc, docData)
+      //handling promises
+      .then(() => {
+        alert("Trip added to favourite");
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  }
+
+  return (
+    <TouchableOpacity onPress={(savedRoom) =>  setSavedRoom(trip.id) + Create()} >
+      <Image style={imgStyle} source={{ uri: imageUrl }} />
+      </TouchableOpacity>
+    );
+};
+
+
 
 const styles = StyleSheet.create({
   trip: {
@@ -92,7 +126,6 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 50,
   },
-
   likeIcon: {
     width: 30,
     height: 30,
