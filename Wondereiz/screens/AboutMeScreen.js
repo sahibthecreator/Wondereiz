@@ -16,7 +16,7 @@ import {
 } from "firebase/firestore";
 
 export default function AboutMe(props) {
-  const userUid = app.auth().currentUser.uid;
+  const userUid = app.auth().currentUser.uid; //will change when registration is complete
   let [bio, setBio] = useState("");
   let [preference, setPreference] = useState("");
   let [error, setError] = useState("");
@@ -30,7 +30,7 @@ export default function AboutMe(props) {
     }
     else {
       Create();
-      props.navigation.navigate("Home");
+      props.navigation.navigate("ProfilePicUpload");
     }
   }
 
