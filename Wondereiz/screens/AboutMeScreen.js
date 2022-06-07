@@ -9,17 +9,29 @@ import {
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-
+import { app, db } from "../Config"
+import {
+  doc,
+  setDoc,
+} from "firebase/firestore";
 
 export default function AboutMe(props) {
-  /*let person = 
-    gender = ""
-  ;
-  <RadioButton style={styles.section} options={options} onSelect={(value) => setOption(value)} />
-  */
-
+  const userUid = app.auth().currentUser.uid;
   let [bio, setBio] = useState("");
+  let [preference, setPreference] = useState("");
+  let [error, setError] = useState("");
+
+  function Validate() {
+    if (bio == "" || preference == "") {
+      setError("All fields must be filled in.");
+    }
+    else if (bio.length < 15) {
+      setError("Bio lenght must be over 15 characters.");
+    }
+    else {
+      // do something
+    }
+  }
 
   return(
       <SafeAreaView style={styles.container}>
@@ -27,7 +39,7 @@ export default function AboutMe(props) {
           <TouchableOpacity onPress={() => props.navigation.navigate('Register')}>
             <Image source={require("../assets/arrow.png")}/>
           </TouchableOpacity>
-            <Text style={styles.caption}>About Me</Text>
+          <Text style={styles.caption}>About Me</Text>
         </View>
         <View style={styles.content}>
           <Text style={styles.bio}>Write about your interests and what kind of travel and what kind of travel buddies you want to meet.</Text>
@@ -44,26 +56,33 @@ export default function AboutMe(props) {
           <Text style={styles.preference}>Who I want to meet</Text>
           <Text style={styles.gender}>Gender</Text>
           <View style={styles.section}>
-            <TouchableOpacity style={styles.button}>
-                <Image style={styles.icon} source={require("../assets/male_icon.png")}/>
-                <Text style={styles.btnText}>
-                  Male
-                </Text>
+            <TouchableOpacity
+              style={styles.button} 
+              onPress={(preference) => setPreference("male")}
+            >
+              <Image style={styles.icon} source={require("../assets/male_icon.png")}/>
+              <Text style={styles.btnText}>Male</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.button} 
-              /*</View>onPress={() => person.gender = "female"} */
-              >
+              onPress={(preference) => setPreference("female")}
+            >
               <Image style={styles.icon} source={require("../assets/female_icon.png")}/>
               <Text style={styles.btnText}>Female</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.btnText}>
-                Not specified
-              </Text>
+            <TouchableOpacity 
+              style={styles.button}
+              onPress={(preference) => setPreference("Not specified")}
+            >
+              <Text style={styles.btnText}>Not specified</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.submit}>
+          <Text style={styles.errorMsg}>{error}</Text>
+          <TouchableOpacity 
+            style={styles.submit} 
+            onPress={() => {
+              Validate();
+            }}>
             <Text style={styles.submitText}>Continue</Text>
           </TouchableOpacity>
         </View> 
@@ -146,11 +165,16 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     width: "100%",
     height: 40,
-    marginTop: 100,
+    marginTop: 20,
   },
   submitText: {
    color: "white",
    fontSize: 20,
+  },
+  errorMsg: {
+    color: "red",
+    fontWeight: "bold",
+    marginTop: 100, // will change when range is added
   },
 });
 
