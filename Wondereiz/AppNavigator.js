@@ -9,7 +9,10 @@ import BottomTabs from "./components/BottomTabs";
 import GroupInfoScreen from "./screens/GroupInfoScreen";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import MyTripsScreen from './screens/MyTripsScreen'
-
+import TransitionPage1Screen from "./screens/TransitionPage1Screen";
+import TransitionPage2Screen from "./screens/TransitionPage2Screen";
+import TripDetailsScreen from "./screens/TripDetailsScreen";
+import FiltersScreen from "./screens/FiltersScreen";
 
 const {Navigator, Screen} = createStackNavigator();
 
@@ -22,7 +25,11 @@ const AppNavigator = () => (
             <Screen name="ForgetPassword" component={ForgetPasswordScreen} />
             <Screen name="Home" component={HomeScreen} />
             <Screen name="MyTrips" component={MyTripsScreen} />
-            <Screen name="GroupInfoScreen" component={GroupInfoScreen} />
+            <Screen name="GroupInfo" component={GroupInfoScreen} />
+            <Screen name="TransitionPage1" component={TransitionPage1Screen} />
+            <Screen name="TransitionPage2" component={TransitionPage2Screen} />
+            <Screen name="TripDetails" component={TripDetailsScreen} />
+            <Screen name="Filters" component={FiltersScreen} />
         </Navigator>
     </NavigationContainer>
 );
