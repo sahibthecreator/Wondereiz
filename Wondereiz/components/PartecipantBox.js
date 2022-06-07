@@ -21,8 +21,7 @@ const PartecipantBoxHeader = ({ post }) => (
             marginBottom: 25,
           }}
         >
-          {" "}
-          {post.partecipant}{" "}
+          {post.partecipant}
         </Text>
         <Text
           style={{
@@ -32,8 +31,7 @@ const PartecipantBoxHeader = ({ post }) => (
             marginTop: 15,
           }}
         >
-          {" "}
-          {post.caption}{" "}
+          {post.caption}
         </Text>
       </View>
     </View>

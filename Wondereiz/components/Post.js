@@ -80,7 +80,7 @@ const PostLike = () => (
 );
 
 const Icon = ({ imgStyle, imageUrl }) => (
-  <TouchableOpacity>
+  <TouchableOpacity >
     <Image style={imgStyle} source={{ uri: imageUrl }} />
   </TouchableOpacity>
 );
