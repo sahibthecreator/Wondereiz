@@ -64,7 +64,7 @@ const PostHeader = ({ post }) => (
           style={{
             color: "#BFBFBF",
             fontWeight: "500",
-            marginLeft: -185,
+            marginLeft: -173,
             marginTop: 15,
           }}
         >

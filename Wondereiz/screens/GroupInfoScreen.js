@@ -1,34 +1,31 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
-import { db } from "../Config"
+import {
+  collection,
+  query,
+  onSnapshot,
+} from "firebase/firestore";
+import { db } from "../Config";
+import PartecipantBox from "../components/PartecipantBox"
 
-export default function GroupInfoScreen(props) {
 
-  const [partecipantsList, setPartecipantsList] = useState([]);
-  const [errorMessage, setErrorMessage] = useState("");
+export default function GroupInfoScreen(props) {  
+  let [partecipant, setPartecipant] = useState([]);
+  let [partecipant_picture, setPartecipantPicture] = useState([]);
 
-  const getPartecipants = async () => {
-    try {
-      const list = [];
-      var snapshot = await Firebase.firestore().collection(db, "User").get();
-      console.log("Here");
-      snapshot.forEach((doc) => {
-        list.push(doc.data());
-      });
-      setPartecipantsList([list]);;
-    } catch (e) {
-      setErrorMessage(
-        "There's no partecipants!"
-      );
-    }
-  };
+  const ref = collection(db, "User");
+  const q = query(ref); 
 
-  //Call when component is rendered
-  useEffect(() => {
-    getPartecipants();
-  }, []);
 
-  
+  onSnapshot(q, (snapshot) => {
+    let partecipants = [];
+    snapshot.docs.forEach((doc) => {
+      partecipants.push(doc.data()); //Adding one by one
+    });
+    setPartecipant(partecipants);
+    console.log(partecipant);
+  });
+
   return (
     <SafeAreaView style={styles.container}>
         <View>
@@ -82,7 +79,18 @@ export default function GroupInfoScreen(props) {
           </Text> 
           
           <View style={styles.partecipants}>
-            {partecipantsList}
+             {partecipant.length > 0 ? (
+                <PartecipantBox style={styles.partecipantBox} 
+                  post={
+                    {
+                    partecipant_picture: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Amsterdam_Zentrum_20091106_075.JPG/1200px-Amsterdam_Zentrum_20091106_075.JPG",
+                    partecipant: partecipant[0].name,
+                    }
+                  }
+                />
+              ) : (
+                <Text>No trips</Text>
+              )}
           </View>
       </ScrollView>
     </SafeAreaView>
@@ -123,7 +131,6 @@ const styles = StyleSheet.create({
   partecipants: {
       top: 0,
       margin: 30,
-      padding: 150,
       borderRadius: 30,
       backgroundColor: "white",
       shadowColor: "#000",
@@ -134,5 +141,5 @@ const styles = StyleSheet.create({
       shadowOpacity: 0.25,
       shadowRadius: 3.84,
       elevation: 5,
-  }
+  },
 });
