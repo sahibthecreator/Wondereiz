@@ -9,7 +9,7 @@ import BottomTabs from "./components/BottomTabs";
 import GroupInfoScreen from "./screens/GroupInfoScreen";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import MyTripsScreen from './screens/MyTripsScreen'
-
+import AboutMeScreen from './screens/AboutMeScreen';
 
 const {Navigator, Screen} = createStackNavigator();
 
@@ -23,6 +23,7 @@ const AppNavigator = () => (
             <Screen name="Home" component={HomeScreen} />
             <Screen name="MyTrips" component={MyTripsScreen} />
             <Screen name="GroupInfoScreen" component={GroupInfoScreen} />
+            <Screen name="AboutMe" component={AboutMeScreen} />
         </Navigator>
     </NavigationContainer>
 );
