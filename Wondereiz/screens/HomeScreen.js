@@ -13,23 +13,25 @@ import Header from "../components/Header";
 import BottomTabs from "../components/BottomTabs";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { db } from "../Config";
+import Post from "../components/Post"
 
 
 
 export default function Home(props) {
-  var [trip, setTrip] = useState([]);
-  var [trip_picture, setTripPicture] = useState([]);
+  let [trip, setTrip] = useState([]);
+  let [trip_picture, setTripPicture] = useState([]);
 
-  const ref = collection(db, "Room", "Room1", "rooms");
-  const q = query(ref, where('trip', '==', "Emmen-Eindhoven"));
+  const ref = collection(db, "Room");
+  const q = query(ref); //Where roo
 
 
   onSnapshot(q, (snapshot) => {
     let rooms = [];
     snapshot.docs.forEach((doc) => {
-      trip.push(doc.data());
+      rooms.push(doc.data()); //Adding one by one
     });
-    console.log(rooms);
+    setTrip(rooms);
+    console.log(trip);
   });
 
 
@@ -37,9 +39,19 @@ export default function Home(props) {
     <SafeAreaView style={styles.container}>
       <Header />
       <ScrollView>
-        {trip.map((post, index) => (
-          <Post post={post} key={index} />
-        ))}
+        {trip.length > 0 ? (
+          <Post
+            post={
+              {
+              trip_picture: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Amsterdam_Zentrum_20091106_075.JPG/1200px-Amsterdam_Zentrum_20091106_075.JPG",
+              trip: trip[0].cityFrom + " - " + trip[0].cityTo,
+              caption: "15 June 2022",
+            }
+          }
+          />
+        ) : (
+          <Text>No trips</Text>
+        )}
       </ScrollView>
       <BottomTabs navigation={props.navigation}></BottomTabs>
     </SafeAreaView>
