@@ -22,6 +22,7 @@
     "firebase": "^9.6.11",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-firebase-hooks": "^5.0.3",
     "react-native": "0.68.2",
     "react-native-actions-sheet": "^0.6.1",
     "react-native-actions-sheet-picker": "^0.3.1",

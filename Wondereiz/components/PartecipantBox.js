@@ -10,7 +10,7 @@ const PartecipantBox = ({post}) => {
 }
 
 const PartecipantBoxHeader = ({ post }) => (
-    <View style={{flexDirection: 'row', justifyContent: 'space-between', margin: 5, alignItems: 'center'}}>
+    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
         <Image source={{ uri: post.partecipant_picture }} style={styles.partecipantBox} />
         <Text
@@ -41,11 +41,11 @@ const PartecipantBoxHeader = ({ post }) => (
 
 const styles = StyleSheet.create({
     partecipantBox: {
-        width: 35,
-        height: 35,
-        borderRadius: 50,
-        marginLeft: 6,
-        borderWidth: 1.6
+        width: 50,
+        height: 50,
+        marginLeft: 10,
+        marginTop: 10,
+        borderRadius: 40,
     }
 })
 

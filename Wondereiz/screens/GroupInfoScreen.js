@@ -1,30 +1,48 @@
-import React, { useState } from "react";
-import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, SafeAreaView, StyleSheet, Image } from "react-native";
 import {
   collection,
   query,
-  onSnapshot,
 } from "firebase/firestore";
+import { ScrollView } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { db } from "../Config";
+import "firebase/compat/firestore";
+import { useCollectionData } from "react-firebase-hooks/firestore";
 import PartecipantBox from "../components/PartecipantBox"
 
 
 export default function GroupInfoScreen(props) {  
-  let [partecipant, setPartecipant] = useState([]);
+  //let [partecipant, setPartecipant] = useState([]);
   let [partecipant_picture, setPartecipantPicture] = useState([]);
 
-  const ref = collection(db, "User");
+  const ref = collection(db, "Room");
   const q = query(ref); 
 
+  const [partecipants] = useCollectionData(query(ref));
 
-  onSnapshot(q, (snapshot) => {
+
+  /*onSnapshot(q, (snapshot) => {
     let partecipants = [];
     snapshot.docs.forEach((doc) => {
       partecipants.push(doc.data()); //Adding one by one
     });
     setPartecipant(partecipants);
     console.log(partecipant);
-  });
+  });*/
+
+  function DisplayPartecipants(props){
+    const {name} = props.partecipant;
+
+    return (
+      <PartecipantBox post = {{
+        partecipant_picture: 
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Amsterdam_Zentrum_20091106_075.JPG/1200px-Amsterdam_Zentrum_20091106_075.JPG",
+        partecipant: name,
+      }
+      }/>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -79,19 +97,26 @@ export default function GroupInfoScreen(props) {
           </Text> 
           
           <View style={styles.partecipants}>
-             {partecipant.length > 0 ? (
-                <PartecipantBox style={styles.partecipantBox} 
-                  post={
-                    {
-                    partecipant_picture: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Amsterdam_Zentrum_20091106_075.JPG/1200px-Amsterdam_Zentrum_20091106_075.JPG",
-                    partecipant: partecipant[0].name,
-                    }
-                  }
-                />
-              ) : (
-                <Text>No trips</Text>
-              )}
+            {partecipants ? 
+            <View>
+              {partecipants && partecipants.map((prt, prtIndex) => (<DisplayPartecipants key={prtIndex} partecipant={prt}/>))}
+            </View>           
+            : (
+              <Text>No Partecipants</Text>
+            )} 
+            <View>
+              <TouchableOpacity>
+                  <Image
+                    source={{
+                      uri: "https://img.icons8.com/ios-glyphs/30/D50FBC/back.png",
+                    }}
+                    style={styles.iconPartecipant}
+                  />
+            </TouchableOpacity>
           </View>
+          </View>
+         
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -129,17 +154,20 @@ const styles = StyleSheet.create({
       elevation: 5,
   },
   partecipants: {
-      top: 0,
-      margin: 30,
-      borderRadius: 30,
-      backgroundColor: "white",
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5,
+    top: 0,
+    margin: 30,
+    borderRadius: 30,
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    position: "relative"
   },
+  iconPartecipant: {
+  }
 });

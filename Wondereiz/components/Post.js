@@ -11,7 +11,7 @@ const tripLikeIcon = [
 
 const Post = ({ post }) => {
   return (
-    <View style={{ marginBottom: 30 }}>
+    <View style={{ marginBottom: 5 }}>
       <PostHeader post={post} />
       <View style={{ marginLeft: 320, marginTop: -30, alignSelf: "center" }}>
         <PostLike />
@@ -49,28 +49,27 @@ const PostHeader = ({ post }) => (
     >
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <Image source={{ uri: post.trip_picture }} style={styles.trip} />
+        <View style={{flexDirection: "column"}}>
         <Text
           style={{
             color: "#8736AA",
             fontWeight: "bold",
             marginLeft: 15,
-            marginBottom: 25,
           }}
-        >
-          {" "}
-          {post.trip}{" "}
+        >  
+          {post.trip}
         </Text>
-        <Text
-          style={{
-            color: "#BFBFBF",
-            fontWeight: "500",
-            marginLeft: -173,
-            marginTop: 15,
-          }}
-        >
-          {" "}
-          {post.caption}{" "}
-        </Text>
+        
+          <Text
+            style={{
+              color: "#BFBFBF",
+              fontWeight: "500",
+              marginLeft: 15
+            }}
+          >
+            {post.caption}
+          </Text>
+        </View>
       </View>
     </View>
   </View>
@@ -88,7 +87,7 @@ const Icon = ({ imgStyle, imageUrl }) => (
 
 const styles = StyleSheet.create({
   trip: {
-    marginLeft: 30,
+    marginLeft: 15,
     width: 70,
     height: 70,
     borderRadius: 50,
