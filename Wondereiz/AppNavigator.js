@@ -10,6 +10,7 @@ import GroupInfoScreen from "./screens/GroupInfoScreen";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import MyTripsScreen from './screens/MyTripsScreen'
 import AboutMeScreen from './screens/AboutMeScreen';
+import ProfilePictureScreen from './screens/ProfilePictureScreen';
 
 const {Navigator, Screen} = createStackNavigator();
 
@@ -24,6 +25,7 @@ const AppNavigator = () => (
             <Screen name="MyTrips" component={MyTripsScreen} />
             <Screen name="GroupInfoScreen" component={GroupInfoScreen} />
             <Screen name="AboutMe" component={AboutMeScreen} />
+            <Screen name="ProfilePicUpload" component={ProfilePictureScreen} />
         </Navigator>
     </NavigationContainer>
 );
