@@ -16,7 +16,7 @@ export default function GroupInfoScreen(props) {
   //let [partecipant, setPartecipant] = useState([]);
   let [partecipant_picture, setPartecipantPicture] = useState([]);
 
-  const ref = collection(db, "Room");
+  const ref = collection(db, "User");
   const q = query(ref); 
 
   const [partecipants] = useCollectionData(query(ref));
@@ -32,13 +32,13 @@ export default function GroupInfoScreen(props) {
   });*/
 
   function DisplayPartecipants(props){
-    const {name} = props.partecipant;
+    const {username} = props.partecipant;
 
     return (
       <PartecipantBox post = {{
         partecipant_picture: 
         "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Amsterdam_Zentrum_20091106_075.JPG/1200px-Amsterdam_Zentrum_20091106_075.JPG",
-        partecipant: name,
+        caption: username,
       }
       }/>
     );
