@@ -34,15 +34,15 @@ export default function Home(props) {
   });*/
 
   function DisplayTrips(props){
-    const {cityFrom, cityTo} = props.trip;
+    const {cityFrom, cityTo, id, travelDate, mainPicture} = props.trip;
 
     return (
       <Post post = {{
-        trip_picture: 
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Amsterdam_Zentrum_20091106_075.JPG/1200px-Amsterdam_Zentrum_20091106_075.JPG",
+        id: id,
+        trip_picture: mainPicture,
         trip: cityFrom + " - " + cityTo,
  //     trip: trips[0].cityFrom + " - " + trips[0].cityTo,
-        caption: "15 June 2022",
+        caption: travelDate,
       }
       }/>
     );

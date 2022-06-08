@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { app, db} from "../Config";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 
 const tripLikeIcon = [
   {
@@ -13,12 +13,11 @@ const tripLikeIcon = [
 ];
 
 const Post = ({ post }) => {
-  
   return (
     <View style={{ marginBottom: 5 }}>
       <PostHeader post={post} />
       <View style={{ marginLeft: 320, marginTop: -30, alignSelf: "center" }}>
-        <PostLike />
+        <PostLike id = {post.id} />
       </View>
     </View>
   );
@@ -79,28 +78,31 @@ const PostHeader = ({ post }) => (
   </View>
 );
 
-const PostLike = () => (
-  <Icon imgStyle={styles.likeIcon} imageUrl={tripLikeIcon[0].imageUrl} />
-);
-
-/*const PostLiked = () => (
-  <Icon imgStyle={styles.likeIcon} imageUrl={tripLikeIcon[0].imageLikedUrl} />
-);*/
+const PostLike = (id) => {
+  return (
+  <Icon id={id} imgStyle={styles.likeIcon} imageUrl={tripLikeIcon[0].imageUrl} />
+  );
+};
 
 
-const Icon = ({ imgStyle, imageUrl }) => {
+const Icon = ({ imgStyle, imageUrl, id  }) => {
+  console.log(id)
+
   const userUid = app.auth().currentUser.uid;
   let [savedRoom, setSavedRoom] = useState("");
-  
 
   function Create() {
     const myDoc = doc(db, "User", userUid);
+
+    updateDoc(myDoc, {
+      "savedRoomsId" : id
+    });
   
-    let docData = {
+    /*let docData = {
       savedRoomsId: {savedRoom}
     };
   
-    setDoc(myDoc, docData)
+    setDoc(myDoc, docData, true)
       //handling promises
       .then(() => {
         alert("Trip added to favourite");
@@ -108,10 +110,11 @@ const Icon = ({ imgStyle, imageUrl }) => {
       .catch((error) => {
         alert(error.message);
       });
+    */
   }
 
   return (
-    <TouchableOpacity onPress={(savedRoom) =>  setSavedRoom(trip.id) + Create()} >
+    <TouchableOpacity onPress={(savedRoom) =>  setSavedRoom(id) + Create()} >
       <Image style={imgStyle} source={{ uri: imageUrl }} />
       </TouchableOpacity>
     );

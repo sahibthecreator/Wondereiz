@@ -31,6 +31,12 @@ Trip details{" "}
 >
 Filters{" "}
 </Text>
+
+<Text
+    onPress={() => props.navigation.navigate("ProfilePicUpload")}
+>
+ProfilePicUpload{" "}
+</Text>
     </View>
   );
 }
