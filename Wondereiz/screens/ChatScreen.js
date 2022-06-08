@@ -16,10 +16,11 @@ import {
   StyleSheet,
   SafeAreaView,
   View,
+  ScrollView,
   TouchableOpacity,
   Text,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 //import React from "react";
 
 export default function Chat(props) {
@@ -76,17 +77,20 @@ export default function Chat(props) {
     );
   }
 
+  const scrollViewRef = useRef();
   //console.log(messages);
   //console.log(firebase.firestore.FieldValue.serverTimestamp());
 
   return (
     <SafeAreaView style={styles.container}>
-      <View>
+      <ScrollView ref={scrollViewRef} onContentSizeChange={() => scrollViewRef.current.scrollToEnd({animated : true})}>
+      <View style={styles.displayedMessages}>
         {messages &&
           messages.map((msg, msgIndex) => (
             <ChatMessage key={msgIndex} message={msg} />
           ))}
       </View>
+      </ScrollView>
       <View style={styles.formText}>
         <TextInput
           placeholder="Write a message..."
@@ -104,8 +108,10 @@ export default function Chat(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    //flexDirection: "column",
     //alignItems: "center",
-    justifyContent: "center",
+    //justifyContent: "space",
+    //flexWrap: "wrap"
   },
   messageText: {
     color: "red",
@@ -123,10 +129,19 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
   receivedText: {
-    backgroundColor: "e5e5ea",
+    backgroundColor: "#e5e5ea",
     color: "black",
   },
+  displayedMessages: {
+    justifyContent: "flex-start",
+    position: "relative"
+  },
   formText: {
+    justifyContent: "flex-end",
+    //marginBottom: 0,
+    bottom: 10,
+    //position: "absolute",
+    //bottom: 10,
     //marginTop: "auto",
   },
   messageButton: {
