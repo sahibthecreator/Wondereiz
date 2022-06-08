@@ -14,7 +14,7 @@ export default function Welcome(props) {
   onAuthStateChanged(app.auth(), (user) => {
     if (user) {
       //alert("Signed In");
-      props.navigation.navigate("Home", { user });
+      //props.navigation.navigate("Home", { user });
     }
   });
 

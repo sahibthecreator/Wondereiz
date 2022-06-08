@@ -13,6 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { onAuthStateChanged } from "firebase/auth";
 import { app } from "../Config";
 
+
 export default function Login(props) {
   var [email, setEmail] = useState("");
   var [password, setPassword] = useState("");
@@ -60,6 +61,7 @@ export default function Login(props) {
             style={{ flex: 1 }}
           />
         </TouchableOpacity>
+      
         <Text style={{fontSize: 20,fontWeight:"900", color: 'white', padding:30}}
         onPress={() => {
           setEmail('test@gmail.com');
