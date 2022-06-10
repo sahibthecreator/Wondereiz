@@ -14,74 +14,97 @@ import {
   getDoc,
 } from "firebase/firestore";
 import Post from "../components/Post";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function MyTrips(props) {
   //console.log("User UID: " + app.auth().currentUser.uid);
   const userUid = app.auth().currentUser.uid;
 
   let [rooms, setRooms] = useState([]);
-  let [favourite, setFavourite] = useState(false);
+  let [favourite, setFavourite] = useState(true);
 
   let q;
 
+  const allBtn = {
+    width: "50%",
+    borderBottomWidth: 1,
+    borderBottomColor: "magenta",
+  };
+  const favBtn = {
+    width: "50%",
+    borderBottomWidth: 1,
+    borderBottomColor: "lightgray",
+  };
+
   if (favourite) {
+    favBtn.borderBottomColor = "magenta";
+    allBtn.borderBottomColor = "lightgray";
     let savedRooms = [];
     const myDoc = doc(db, "User", userUid);
 
     getDoc(myDoc)
       .then((snapshot) => {
         if (snapshot.exists) {
-          savedRooms = snapshot.data().savedRooms;
-          console.log(savedRooms);
+          savedRooms = snapshot.data().savedRoomsId;
+
+          q = query(collection(db, "Room"), where("id", "in", savedRooms));
+          onSnapshot(q, (snapshot) => {
+            let tempRooms = [];
+            snapshot.docs.forEach((doc) => {
+              tempRooms.push(doc.data());
+            });
+            setRooms(tempRooms);
+            //console.log(rooms);
+          });
+          //console.log(savedRooms);
         } else {
           console.log("No data");
         }
       })
       .catch((error) => {
-        alert(error.message);
-      })
-      .then(() => {
-       // q = query(collection(db, "Room"), where("id", "in", savedRooms));
-      })
-    
+        console.log(error.message);
+      });
   } else {
+    favBtn.borderBottomColor = "lightgray";
+    allBtn.borderBottomColor = "magenta";
     q = query(collection(db, "Room"), where("adminUid", "==", userUid));
-  }
-  onSnapshot(q, (snapshot) => {
-    let tempRooms = [];
-    snapshot.docs.forEach((doc) => {
-      tempRooms.push(doc.data());
+    onSnapshot(q, (snapshot) => {
+      let tempRooms = [];
+      snapshot.docs.forEach((doc) => {
+        tempRooms.push(doc.data());
+      });
+      setRooms(tempRooms);
+      //console.log(rooms);
     });
-    setRooms(tempRooms);
-    console.log(rooms);
-  });
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.pageNameTxt}>My Trips</Text>
       <View style={{ width: "100%", flexDirection: "row" }}>
-        <TouchableOpacity style={styles.allBtn}>
+        <TouchableOpacity style={allBtn} onPress={() => setFavourite(false)}>
           <Text style={styles.containerTxt}>All</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.favBtn}>
+        <TouchableOpacity style={favBtn} onPress={() => setFavourite(true)}>
           <Text style={styles.containerTxt}>Favourite</Text>
         </TouchableOpacity>
       </View>
-
-      {rooms.length > 0 ? (
-        <Post
-          post={{
-            trip_picture:
-              "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Amsterdam_Zentrum_20091106_075.JPG/1200px-Amsterdam_Zentrum_20091106_075.JPG",
-            trip: rooms[0].cityFrom + " - " + rooms[0].cityTo,
-            caption: "15 June 2022",
-          }}
-        />
-      ) : (
-        <Text>No trips</Text>
-      )}
-
+      <ScrollView>
+        {rooms ? (
+          rooms.map((data, idx) => (
+            <Post
+              post={{
+                trip_picture: rooms[idx].mainPicture,
+                trip: rooms[idx].cityFrom + " - " + rooms[idx].cityTo,
+                caption: rooms[idx].travelDate,
+              }}
+            />
+          ))
+        ) : (
+          <Text>No trips</Text>
+        )}
+      </ScrollView>
       <BottomTabs navigation={props.navigation} />
     </SafeAreaView>
   );
@@ -91,13 +114,13 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
     flex: 1,
-    alignItems: "center",
   },
   pageNameTxt: {
     fontSize: 25,
     fontWeight: "500",
     color: "#b61fb5",
     paddingBottom: 40,
+    alignSelf: "center",
   },
   allBtn: {
     width: "50%",

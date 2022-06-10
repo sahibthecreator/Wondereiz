@@ -86,7 +86,7 @@ const PostLike = (id) => {
 
 
 const Icon = ({ imgStyle, imageUrl, id  }) => {
-  console.log(id)
+  //console.log(id)
 
   const userUid = app.auth().currentUser.uid;
   let [savedRoom, setSavedRoom] = useState("");
