@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
-import { app, db} from "../Config";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { app, db } from "../Config";
+import { doc, setDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
-const tripLikeIcon = [
-  {
-    name: "Like",
-    imageUrl: "https://img.icons8.com/small/60/D50FBC/hearts.png",
-    imageLikedUrl: "https://img.icons8.com/material/60/D50FBC/like--v1.png",
-  },
-];
+const tripLikeIcon =
+{
+  name: "Like",
+  imageUrl: "https://img.icons8.com/small/60/D50FBC/hearts.png",
+  imageLikedUrl: "https://img.icons8.com/material/60/D50FBC/like--v1.png",
+};
+
+
 
 const Post = ({ post }) => {
   return (
     <View style={{ marginBottom: 5 }}>
       <PostHeader post={post} />
       <View style={{ marginLeft: 320, marginTop: -30, alignSelf: "center" }}>
-        <PostLike id = {post.id} />
+        <PostLike id={post.id} />
       </View>
     </View>
   );
@@ -52,17 +53,17 @@ const PostHeader = ({ post }) => (
     >
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <Image source={{ uri: post.trip_picture }} style={styles.trip} />
-        <View style={{flexDirection: "column"}}>
-        <Text
-          style={{
-            color: "#8736AA",
-            fontWeight: "bold",
-            marginLeft: 15,
-          }}
-        >  
-          {post.trip}
-        </Text>
-        
+        <View style={{ flexDirection: "column" }}>
+          <Text
+            style={{
+              color: "#8736AA",
+              fontWeight: "bold",
+              marginLeft: 15,
+            }}
+          >
+            {post.trip}
+          </Text>
+
           <Text
             style={{
               color: "#BFBFBF",
@@ -80,44 +81,46 @@ const PostHeader = ({ post }) => (
 
 const PostLike = (id) => {
   return (
-  <Icon id={id} imgStyle={styles.likeIcon} imageUrl={tripLikeIcon[0].imageUrl} />
+    <Icon id={id} imgStyle={styles.likeIcon} />
   );
 };
 
 
-const Icon = ({ imgStyle, imageUrl, id  }) => {
-  //console.log(id)
+const Icon = ({ imgStyle, id }) => {
+  const [likeIcon, SetLikeIcon] = useState("https://img.icons8.com/small/60/D50FBC/hearts.png");
+  const imageLikedUrl = "https://img.icons8.com/material/60/D50FBC/like--v1.png";
+  const imageUrl = "https://img.icons8.com/small/60/D50FBC/hearts.png";
+
+
+
+  console.log(id.id)
 
   const userUid = app.auth().currentUser.uid;
   let [savedRoom, setSavedRoom] = useState("");
+  const myDoc = doc(db, "User", userUid);
 
   function Create() {
-    const myDoc = doc(db, "User", userUid);
+    if (likeIcon == imageUrl) {
+      SetLikeIcon(imageLikedUrl);
 
-    updateDoc(myDoc, {
-      "savedRoomsId" : id
-    });
-  
-    /*let docData = {
-      savedRoomsId: {savedRoom}
-    };
-  
-    setDoc(myDoc, docData, true)
-      //handling promises
-      .then(() => {
-        alert("Trip added to favourite");
-      })
-      .catch((error) => {
-        alert(error.message);
+
+      updateDoc(myDoc, {
+        "savedRoomsId": arrayUnion(id.id)
       });
-    */
+    } else {
+      SetLikeIcon(imageUrl);
+
+      updateDoc(myDoc, {
+        "savedRoomsId": arrayRemove(id.id)
+      });
+    }
   }
 
   return (
-    <TouchableOpacity onPress={(savedRoom) =>  setSavedRoom(id) + Create()} >
-      <Image style={imgStyle} source={{ uri: imageUrl }} />
-      </TouchableOpacity>
-    );
+    <TouchableOpacity onPress={(savedRoom) => setSavedRoom(id) + Create()} >
+      <Image style={imgStyle} source={{ uri: likeIcon }} />
+    </TouchableOpacity>
+  );
 };
 
 
