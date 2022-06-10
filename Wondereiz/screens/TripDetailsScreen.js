@@ -7,15 +7,58 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
-import { app } from "../Config";
+import { app, db } from "../Config";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
 
 export default function Trip_details(props) {
 //console.log("User UID: " + app.auth().currentUser.uid);
-const userUid = app.auth().currentUser.uid;
+//const userUid = app.auth().currentUser.uid;
+//const roomId =;
+let roomId = "room1";
 
 let [rooms, setRooms] = useState([]);
 
-let q = query(collection(db,'Room'), where ());
+let q = query(collection(db,'Room'), where ('id', '==', roomId));
+
+onSnapshot(q, (snapshot) => {
+  let tempRooms = [];
+  snapshot.docs.forEach((doc) => {
+    tempRooms.push(doc.data());
+  });
+  setRooms(tempRooms);
+  console.log(rooms);
+});
+
+/*let cityFrom = rooms[0].cityFrom;
+let cityTo = rooms[0].cityTo;
+let tripPicture = rooms[0].mainPicture;
+let aboutTheTrip = rooms[0].description;
+let tripDate = rooms[0].travelDate;
+let tripTime = rooms[0].travelTime;
+let members = rooms[0].members;
+let maxMembers = rooms[0].maxMembers;
+let minAge = rooms[0].minAge;
+let maxAge = rooms[0].maxAge;*/
+
+let cityFrom = "Amsterdam";
+let cityTo = "Groningen";
+let tripPicture = "'../assets/amsterdam.png";
+let aboutTheTrip = "I only like people who love cats. The others will not be accepted.";
+let tripDate = "15 June 2022";
+let tripTime = "12:00";
+let members = "5";
+let maxMembers = "6";
+let minAge = "18";
+let maxAge = "25";
+
+let [user, setUser] = useState();
+
+const favourite = () => setUser;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -27,37 +70,41 @@ let q = query(collection(db,'Room'), where ());
       <View style={styles.photo}>
         <Image source={require('../assets/amsterdam.png')} />
       </View>
-      <Text style={styles.header}>Eindhoven - Amsterdam</Text>
+      <Text style={styles.header}>{cityFrom} - {cityTo}</Text>
       <View style={styles.details}>
         <Text style={styles.details_header}>About the trip</Text>
-        <Text style={styles.details_text}>I only like people who love cats. The others will not be accepted.</Text>
+        <Text style={styles.details_text}>{aboutTheTrip}</Text>
       </View>
       <View style={[styles.room, {flexDirection: "row", alignContent: "space-between", flexWrap: "wrap"}]}>
         <View style={styles.room_info}>
           <Text style={styles.room_header}>Date</Text>
-          <Text style={styles.room_text}>15 June 2022</Text>
+          <Text style={styles.room_text}>{tripDate}</Text>
         </View>
         <View style={styles.room_info}>
           <Text style={styles.room_header}>Time</Text>
-          <Text style={styles.room_text}>12:00</Text>
+          <Text style={styles.room_text}>{tripTime}</Text>
         </View>
         <View style={styles.room_info}>
           <Text style={styles.room_header}>Members</Text>
-          <Text style={styles.room_text}>5/6</Text>
+          <Text style={styles.room_text}>{members}/{maxMembers}</Text>
         </View>
         <View style={styles.room_info}>
           <Text style={styles.room_header}>Age</Text>
-          <Text style={styles.room_text}>18-25</Text>
+          <Text style={styles.room_text}>{minAge}-{maxAge}</Text>
         </View>
       </View>
       <View style={styles.like}>
-        <Image 
-        style={styles.heart}
-        source={require('../assets/heart.png')} />
-        <Text style={styles.like_text}>I like this trip</Text>
+        <TouchableOpacity onPress={like}>
+          <Image 
+          style={styles.heart}
+          source={require('../assets/heart.png')} />
+          <Text style={styles.like_text}>I like this trip</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.join}>
-        <Text style={styles.join_text}>Join the trip</Text>
+        <TouchableOpacity onPress={join}>
+          <Text style={styles.join_text}>Join the trip</Text>
+        </TouchableOpacity>
       </View>
   </SafeAreaView>
 )};

@@ -32,13 +32,15 @@ import {
       setUser(users);
       console.log(user);
     });*/
+    //let username = app.auth().currentUser.name;
+    let username = "Andrey";
 
     return (
     <LinearGradient colors={["#441B55", "#b61fb5"]} style={styles.background}>
     <SafeAreaView style={styles.container}>
       <Image style={styles.animatedImage}
       source={require("../assets/train.gif")} />
-      <Text style={styles.caption_header}>Welcome to Wondereiz (Username)!</Text>
+      <Text style={styles.caption_header}>Welcome to Wondereiz {username}!</Text>
       <Text style={styles.caption}>Before starting the adventure tell us what you are looking for!</Text>
       <TouchableOpacity 
       style={styles.button}
