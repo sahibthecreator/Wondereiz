@@ -18,9 +18,12 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
   Text,
 } from "react-native";
 import React, { useState, useRef } from "react";
+import Icon from "react-native-ionicons";
 //import React from "react";
 
 export default function Chat(props) {
@@ -57,22 +60,25 @@ export default function Chat(props) {
   };
 
   function ChatMessage(props) {
-    const { text, uid } = props.message;
-
+    const { createdAt, text, uid } = props.message;
+    //console.log(createdAt);
     const messageClass = uid === auth.currentUser.uid ? "sent" : "received";
     //<View style={`message ${messageClass}`}>
-    return (
+    return messageClass === "sent" ? (
       <View
-        style={[
-          styles.message,
-          messageClass == "sent" ? styles.sent : styles.message,
-        ]}
+        style={styles.receiver}
+        // style={[
+        //   styles.message,
+        //   messageClass == "sent" ? styles.sent : styles.message,
+        // ]}
       >
-        <Text
-          style={messageClass == "sent" ? styles.sentText : styles.receivedText}
-        >
-          {text}
-        </Text>
+        <Text style={styles.receiverText}>{text}</Text>
+      </View>
+    ) : (
+      <View style={styles.sender}>
+        <Text style={styles.senderText}>{text}</Text>
+        <Text style={styles.senderName}>{auth.currentUser.email}</Text>
+        {/* <Text style={styles.time}>{createdAt}</Text> */}
       </View>
     );
   }
@@ -83,24 +89,30 @@ export default function Chat(props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView ref={scrollViewRef} onContentSizeChange={() => scrollViewRef.current.scrollToEnd({animated : true})}>
-      <View style={styles.displayedMessages}>
-        {messages &&
-          messages.map((msg, msgIndex) => (
-            <ChatMessage key={msgIndex} message={msg} />
-          ))}
-      </View>
-      </ScrollView>
-      <View style={styles.formText}>
-        <TextInput
-          placeholder="Write a message..."
-          onChangeText={(formValue) => setFormValue(formValue)}
-          value={formValue}
-        />
-        <TouchableOpacity style={styles.messageButton} onPress={sendMessage}>
-          <Image source={{ uri: "../assets/icons8-paper-plane-24.png" }} />
-        </TouchableOpacity>
-      </View>
+      <KeyboardAvoidingView
+        style={styles.displayedMessages}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <>
+          <ScrollView>
+            {messages &&
+              messages.map((msg, msgIndex) => (
+                <ChatMessage key={msgIndex} message={msg} />
+              ))}
+          </ScrollView>
+          <View style={styles.footer}>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Write a message..."
+              onChangeText={(formValue) => setFormValue(formValue)}
+              value={formValue}
+            />
+            <TouchableOpacity onPress={sendMessage} activeOpacity={0.5}>
+              <Image source={require("../assets/icons8-paper-plane-24.png")} />
+            </TouchableOpacity>
+          </View>
+        </>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -108,6 +120,7 @@ export default function Chat(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 20,
     //flexDirection: "column",
     //alignItems: "center",
     //justifyContent: "space",
@@ -117,31 +130,76 @@ const styles = StyleSheet.create({
     color: "red",
   },
   message: {
-    display: "flex",
-    alignItems: "flex-start",
+    // display: "flex",
+    // alignItems: "flex-start",
+    padding: 15,
+    backgroundColor: "#ECECEC",
+    borderRadius: 20,
+    marginRight: 15,
+    marginBottom: 20,
+    maxWidth: "80%",
+    position: "relative",
+  },
+  receiver: {
+    padding: 15,
+    backgroundColor: "#ECECEC",
+    alignSelf: "flex-end",
+    borderRadius: 20,
+    marginRight: 15,
+    marginBottom: 20,
+    maxWidth: "80%",
+    position: "relative",
+  },
+  sender: {
+    padding: 15,
+    backgroundColor: "#2B68E6",
+    alignSelf: "flex-start",
+    borderRadius: 20,
+    margin: 15,
+    maxWidth: "80%",
+    position: "relative",
   },
   sent: {
     flexDirection: "row-reverse",
   },
-  sentText: {
+  senderText: {
     color: "white",
-    backgroundColor: "#0b93f6",
-    alignSelf: "flex-end",
+    fontWeight: "500",
+    marginLeft: 10,
+    marginBottom: 15,
+    // backgroundColor: "#0b93f6",
+    // alignSelf: "flex-end",
   },
-  receivedText: {
-    backgroundColor: "#e5e5ea",
+  receiverText: {
+    //backgroundColor: "#e5e5ea",
     color: "black",
+    fontWeight: "500",
+    marginLeft: 10,
   },
   displayedMessages: {
-    justifyContent: "flex-start",
-    position: "relative"
+    flex: 1,
+    //justifyContent: "flex-start",
+    //position: "relative",
   },
-  formText: {
-    justifyContent: "flex-end",
+  textInput: {
+    bottom: 0,
+    height: 40,
+    flex: 1,
+    marginRight: 15,
+    backgroundColor: "#ECECEC",
+    padding: 10,
+    color: "grey",
+    borderRadius: 30,
+  },
+  footer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    padding: 15,
+    //justifyContent: "flex-end",
     //marginBottom: 0,
-    bottom: 10,
+    bottom: 0,
     //position: "absolute",
-    //bottom: 10,
     //marginTop: "auto",
   },
   messageButton: {
