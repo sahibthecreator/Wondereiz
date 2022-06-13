@@ -14,8 +14,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import { app } from "../Config";
 
 export default function Login(props) {
-  var [email, setEmail] = useState("");
-  var [password, setPassword] = useState("");
+  var [email, setEmail] = useState("skeenoteeth2@gmail.com");
+  var [password, setPassword] = useState("cioiul");
   var [error, setError] = useState("");
 
   onAuthStateChanged(app.auth(), (user) => {

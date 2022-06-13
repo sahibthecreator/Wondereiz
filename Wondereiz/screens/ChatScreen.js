@@ -22,8 +22,8 @@ import {
   Platform,
   Text,
 } from "react-native";
-import React, { useState, useRef } from "react";
-import Icon from "react-native-ionicons";
+import React, { useState, useRef, Component } from "react";
+//import Icon from "react-native-ionicons";
 //import React from "react";
 
 export default function Chat(props) {
@@ -45,10 +45,15 @@ export default function Chat(props) {
     if (formValue.trim() != "") {
       e.preventDefault();
 
+      let date = new Date().toUTCString();
+      let time = date.substring(17,25);
+      //console.log(date);
+
       const { uid } = auth.currentUser;
 
       await addDoc(messagesRef, {
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        createdAt: date,
+        createdAtTime: time, 
         text: formValue,
         uid,
       });
@@ -59,31 +64,47 @@ export default function Chat(props) {
     }
   };
 
+  let footerY;
+
   function ChatMessage(props) {
-    const { createdAt, text, uid } = props.message;
+    const { createdAtTime, text, uid } = props.message;
     //console.log(createdAt);
     const messageClass = uid === auth.currentUser.uid ? "sent" : "received";
     //<View style={`message ${messageClass}`}>
     return messageClass === "sent" ? (
       <View
-        style={styles.receiver}
+        style={styles.receiver} onLayout={(e) => {footerY = e.nativeEvent.layout.y;}}
         // style={[
         //   styles.message,
         //   messageClass == "sent" ? styles.sent : styles.message,
         // ]}
       >
         <Text style={styles.receiverText}>{text}</Text>
+        <Text style={styles.time}>{createdAtTime}</Text> 
       </View>
     ) : (
       <View style={styles.sender}>
         <Text style={styles.senderText}>{text}</Text>
         <Text style={styles.senderName}>{auth.currentUser.email}</Text>
-        {/* <Text style={styles.time}>{createdAt}</Text> */}
+        <Text style={styles.time}>{createdAtTime}</Text>  
       </View>
     );
   }
 
   const scrollViewRef = useRef();
+  const [listHeight,setListHeight] = useState(0);
+  const [scrollViewHeight,setScrollViewHeight] = useState(0);
+
+  // componentDidUpdate(){
+  //   this.scrollToBottom();
+  // }
+
+  function scrollToBottom(){
+    const bottomOfList = listHeight - scrollViewHeight;
+    //console.log('scrollToBottom');
+    this.scrollView.scrollTo({ y: bottomOfList });
+  }
+
   //console.log(messages);
   //console.log(firebase.firestore.FieldValue.serverTimestamp());
 
@@ -94,7 +115,15 @@ export default function Chat(props) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <>
-          <ScrollView>
+          <ScrollView ref={(component) => this.scrollView = component}
+          onContentSizeChange={(w,h) => {setListHeight(h)}}
+          onLayout={(e) => {
+            const height = e.nativeEvent.layout.y;
+            setScrollViewHeight(height);
+          }}
+    //       {(ref) => {this.scrollRef = ref}}
+    // onContentSizeChange={() => this.scrollRef.scrollToEnd({animated: true})}
+          >
             {messages &&
               messages.map((msg, msgIndex) => (
                 <ChatMessage key={msgIndex} message={msg} />
@@ -165,6 +194,7 @@ const styles = StyleSheet.create({
   senderText: {
     color: "white",
     fontWeight: "500",
+    fontSize: 16,
     marginLeft: 10,
     marginBottom: 15,
     // backgroundColor: "#0b93f6",
@@ -173,8 +203,14 @@ const styles = StyleSheet.create({
   receiverText: {
     //backgroundColor: "#e5e5ea",
     color: "black",
+    fontSize: 16,
     fontWeight: "500",
     marginLeft: 10,
+  },
+  time: {
+    fontSize: 11,
+    // position: "absolute",
+    
   },
   displayedMessages: {
     flex: 1,
