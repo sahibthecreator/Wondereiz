@@ -12,12 +12,12 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 import PartecipantBox from "../components/PartecipantBox"
 
 
-export default function GroupInfoScreen(props) {  
+export default function GroupInfoScreen(props) {
   //let [partecipant, setPartecipant] = useState([]);
   let [partecipant_picture, setPartecipantPicture] = useState([]);
 
   const ref = collection(db, "User");
-  const q = query(ref); 
+  const q = query(ref);
 
   const [partecipants] = useCollectionData(query(ref));
 
@@ -31,91 +31,91 @@ export default function GroupInfoScreen(props) {
     console.log(partecipant);
   });*/
 
-  function DisplayPartecipants(props){
-    const {username} = props.partecipant;
+  function DisplayPartecipants(props) {
+    const { username } = props.partecipant;
 
     return (
-      <PartecipantBox post = {{
-        partecipant_picture: 
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Amsterdam_Zentrum_20091106_075.JPG/1200px-Amsterdam_Zentrum_20091106_075.JPG",
+      <PartecipantBox post={{
+        partecipant_picture:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Amsterdam_Zentrum_20091106_075.JPG/1200px-Amsterdam_Zentrum_20091106_075.JPG",
         caption: username,
       }
-      }/>
+      } />
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-        <View>
-          <TouchableOpacity>
-            <Image
-              source={{
-                uri: "https://img.icons8.com/ios-glyphs/30/D50FBC/back.png",
-              }}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View>
-            <Image
-              source={{
-                uri: "https://media.cntraveller.com/photos/611be7c7a106ea5ed3099f8c/4:3/w_2664,h_1998,c_limit/amsterdam-mag-jan19-matthew-buck23.jpg",
-              }}
-              style={styles.groupImg}
-            />
-            <Text style={{
-            color: "#8736AA",
-            fontSize: 18,
-            fontWeight: '500',
-            marginLeft: 100,
-            marginTop: 30
-            }}>
-              Eindhoven - Amsterdam
-            </Text>
-            <Text style={{
-              color: "#BFBFBF",
-              fontSize: 13,
-              fontWeight: '500',
-              marginLeft: 155,
-              marginTop: 8
-            }}>
-              15 June 2022
-            </Text>
-        </View>
+      <View>
+        <TouchableOpacity>
+          <Image
+            source={{
+              uri: "https://img.icons8.com/ios-glyphs/30/D50FBC/back.png",
+            }}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+      </View>
+      <View>
+        <Image
+          source={{
+            uri: "https://media.cntraveller.com/photos/611be7c7a106ea5ed3099f8c/4:3/w_2664,h_1998,c_limit/amsterdam-mag-jan19-matthew-buck23.jpg",
+          }}
+          style={styles.groupImg}
+        />
+        <Text style={{
+          color: "#8736AA",
+          fontSize: 18,
+          fontWeight: '500',
+          marginLeft: 100,
+          marginTop: 30
+        }}>
+          Eindhoven - Amsterdam
+        </Text>
+        <Text style={{
+          color: "#BFBFBF",
+          fontSize: 13,
+          fontWeight: '500',
+          marginLeft: 155,
+          marginTop: 8
+        }}>
+          15 June 2022
+        </Text>
+      </View>
 
-        <View style={styles.divider}/>
+      <View style={styles.divider} />
 
-        <ScrollView>
-          <Text style={{
-            color: "#8736AA",
-            fontSize: 18,
-            fontWeight: '500',
-            marginLeft: 30,
-            marginTop: 35
-            }}>
-              6 Partecipants
-          </Text> 
-          
-          <View style={styles.partecipants}>
-            {partecipants ? 
+      <ScrollView>
+        <Text style={{
+          color: "#8736AA",
+          fontSize: 18,
+          fontWeight: '500',
+          marginLeft: 30,
+          marginTop: 35
+        }}>
+          {partecipants?.length} Partecipants
+        </Text>
+
+        <View style={styles.partecipants}>
+          {partecipants ?
             <View>
-              {partecipants && partecipants.map((prt, prtIndex) => (<DisplayPartecipants key={prtIndex} partecipant={prt}/>))}
-            </View>           
+              {partecipants && partecipants.map((prt, prtIndex) => (<DisplayPartecipants key={prtIndex} partecipant={prt} />))}
+            </View>
             : (
               <Text>No Partecipants</Text>
-            )} 
-            <View>
-              <TouchableOpacity>
-                  <Image
-                    source={{
-                      uri: "https://img.icons8.com/ios-glyphs/30/D50FBC/back.png",
-                    }}
-                    style={styles.iconPartecipant}
-                  />
+            )}
+          <View>
+            <TouchableOpacity>
+              <Image
+                source={{
+                  uri: "https://img.icons8.com/ios-glyphs/30/D50FBC/back.png",
+                }}
+                style={styles.iconPartecipant}
+              />
             </TouchableOpacity>
           </View>
-          </View>
-         
+        </View>
+
 
       </ScrollView>
     </SafeAreaView>
@@ -142,16 +142,16 @@ const styles = StyleSheet.create({
   },
   divider: {
     marginTop: 45,
-    borderBottomColor:"white",
-    borderBottomWidth:1,
+    borderBottomColor: "white",
+    borderBottomWidth: 1,
     shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.40,
-      shadowRadius: 3.84,
-      elevation: 5,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.40,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   partecipants: {
     top: 0,
