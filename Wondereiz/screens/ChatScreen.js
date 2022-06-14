@@ -185,7 +185,9 @@ const styles = StyleSheet.create({
   },
   time: {
     fontSize: 11,
-    // position: "absolute",
+    position: "absolute",
+    alignSelf: "flex-end",
+    
   },
   displayedMessages: {
     flex: 1,
