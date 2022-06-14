@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  KeyboardAvoidingView
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -69,6 +70,8 @@ export default function Login(props) {
           SignIn();
         }}
          >Fast Login</Text>
+         <KeyboardAvoidingView
+         behavior="padding">
         <View style={styles.form}>
           <Text style={styles.caption}>Sign In</Text>
           <View style={styles.sectionStyle}>
@@ -118,6 +121,7 @@ export default function Login(props) {
             Forgot your password?{" "}
           </Text>
         </View>
+        </KeyboardAvoidingView>
         <Image style={styles.bgImage} source={require("../assets/world.png")} />
       </SafeAreaView>
     </LinearGradient>

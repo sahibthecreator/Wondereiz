@@ -4,7 +4,7 @@ import { app } from "../Config";
 
 export default function Register(props) {
   return (
-    <SafeAreaView style={{alignItems: 'center'}}>
+    <SafeAreaView style={{ alignItems: 'center' }}>
       <Text>Register page</Text>
       <Button
         title="Navigate"
@@ -20,7 +20,9 @@ export default function Register(props) {
       <Text onPress={() => props.navigation.navigate("TripDetails")}>
         Trip details{" "}
       </Text>
-      <Text onPress={() => props.navigation.navigate("Filters")} style={{fontSize: 40, fontWeight: '500'}}>Filters </Text>
+      <Text onPress={() => props.navigation.navigate("Filters")} style={{ fontSize: 40, fontWeight: '500' }}>Filters </Text>
+
+      <Text onPress={() => props.navigation.navigate("GroupInfoScreen")} style={{ fontSize: 40, fontWeight: '500' }}>GroupInfoScreen </Text>
 
       <Text onPress={() => props.navigation.navigate("ProfilePicUpload")}>
         ProfilePicUpload{" "}
