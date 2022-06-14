@@ -109,7 +109,7 @@ const DropDown = ({
           onPress={onPress}
           style={[styles.dropdownItemContainer, itemBackgroundStyle]}
         >
-          <DefaultItem text={item.text} textStyle={itemTextStyle} />
+          <DefaultItem text={item.text} textStyle={itemTextStyle}/>
         </TouchableOpacity>
         <View style={styles.line}></View>
       </View>

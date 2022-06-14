@@ -94,9 +94,7 @@ export default function DropdownComponent(props) {
   return (
     <SafeAreaView style={styles.container}>
 
-
       {/* ---------------City Picker------------------ */}
-
 
       <View style={{ zIndex: 100, width: "70%", marginLeft: 30, marginBottom: 40 }}>
         <Text style={styles.selectLabel}>Select your city:</Text>
@@ -167,7 +165,7 @@ export default function DropdownComponent(props) {
             values={[ageRange[0], ageRange[1]]}
             sliderLength={280}
             onValuesChange={ageRangeChange}     NE RABOTAYET
-            min={15}  
+            min={15}
             max={60}
             allowOverlap={false}
             minMarkerOverlapDistance={10}
@@ -199,7 +197,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderBottomColor: "gray",
     borderBottomWidth: 0.5,
-    
+
   },
   placeholderStyle: {
     fontSize: 16,
