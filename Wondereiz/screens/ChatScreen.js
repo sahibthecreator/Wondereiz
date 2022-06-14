@@ -23,7 +23,7 @@ import {
   Text,
 } from "react-native";
 import React, { useState, useRef } from "react";
-import Icon from "react-native-ionicons";
+//import Icon from "react-native-ionicons";
 //import React from "react";
 
 export default function Chat(props) {
@@ -45,10 +45,14 @@ export default function Chat(props) {
     if (formValue.trim() != "") {
       e.preventDefault();
 
+      let date = new Date().toUTCString();
+      let time = date.substring(17,25);
+
       const { uid } = auth.currentUser;
 
       await addDoc(messagesRef, {
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        createdAt: date,
+        createdAtTime: time, 
         text: formValue,
         uid,
       });
@@ -60,7 +64,7 @@ export default function Chat(props) {
   };
 
   function ChatMessage(props) {
-    const { createdAt, text, uid } = props.message;
+    const { createdAtTime, text, uid } = props.message;
     //console.log(createdAt);
     const messageClass = uid === auth.currentUser.uid ? "sent" : "received";
     //<View style={`message ${messageClass}`}>
@@ -73,12 +77,13 @@ export default function Chat(props) {
         // ]}
       >
         <Text style={styles.receiverText}>{text}</Text>
+        <Text style={styles.time}>{createdAtTime}</Text> 
       </View>
     ) : (
       <View style={styles.sender}>
         <Text style={styles.senderText}>{text}</Text>
         <Text style={styles.senderName}>{auth.currentUser.email}</Text>
-        {/* <Text style={styles.time}>{createdAt}</Text> */}
+        <Text style={styles.time}>{createdAtTime}</Text>
       </View>
     );
   }
@@ -91,9 +96,11 @@ export default function Chat(props) {
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
         style={styles.displayedMessages}
-        behavior={"position"}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        //COULD ONLY BE FOR ANDROID
+        keyboardVerticalOffset={-270}
       >
-        <ScrollView>
+        <ScrollView contentContainerStyle={{bottom: 0}}>
           {messages &&
             messages.map((msg, msgIndex) => (
               <ChatMessage key={msgIndex} message={msg} />
@@ -163,6 +170,7 @@ const styles = StyleSheet.create({
   senderText: {
     color: "white",
     fontWeight: "500",
+    fontSize: 16,
     marginLeft: 10,
     marginBottom: 15,
     // backgroundColor: "#0b93f6",
@@ -172,7 +180,12 @@ const styles = StyleSheet.create({
     //backgroundColor: "#e5e5ea",
     color: "black",
     fontWeight: "500",
+    fontSize: 16,
     marginLeft: 10,
+  },
+  time: {
+    fontSize: 11,
+    // position: "absolute",
   },
   displayedMessages: {
     flex: 1,
@@ -196,7 +209,7 @@ const styles = StyleSheet.create({
     padding: 15,
     //justifyContent: "flex-end",
     //marginBottom: 0,
-    //bottom: 0,
+    bottom: 10,
     //position: "absolute",
     //marginTop: "auto",
   },
