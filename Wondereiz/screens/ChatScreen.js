@@ -98,7 +98,7 @@ export default function Chat(props) {
         style={styles.displayedMessages}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         //COULD ONLY BE FOR ANDROID
-        keyboardVerticalOffset={-270}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -270}
       >
         <ScrollView contentContainerStyle={{bottom: 0}}>
           {messages &&
@@ -209,7 +209,6 @@ const styles = StyleSheet.create({
     padding: 15,
     //justifyContent: "flex-end",
     //marginBottom: 0,
-    bottom: 10,
     //position: "absolute",
     //marginTop: "auto",
   },
