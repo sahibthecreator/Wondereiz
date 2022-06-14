@@ -1,24 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { app, db } from "../Config";
-import { doc, setDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 
-const tripLikeIcon =
-{
+const tripLikeIcon = {
   name: "Like",
   imageUrl: "https://img.icons8.com/small/60/D50FBC/hearts.png",
   imageLikedUrl: "https://img.icons8.com/material/60/D50FBC/like--v1.png",
 };
-
-
 
 const Post = ({ post }) => {
   return (
     <View style={{ marginBottom: 5 }}>
       <PostHeader post={post} />
       <View style={{ marginLeft: 320, marginTop: -30, alignSelf: "center" }}>
-        <PostLike id={post.id} />
+        <PostLike id={post.id} liked={post.liked} />
       </View>
     </View>
   );
@@ -68,7 +71,7 @@ const PostHeader = ({ post }) => (
             style={{
               color: "#BFBFBF",
               fontWeight: "500",
-              marginLeft: 15
+              marginLeft: 15,
             }}
           >
             {post.caption}
@@ -79,51 +82,47 @@ const PostHeader = ({ post }) => (
   </View>
 );
 
-const PostLike = (id) => {
-  return (
-    <Icon id={id} imgStyle={styles.likeIcon} />
-  );
+const PostLike = ({ id, liked }) => {
+  return <Icon id={id} liked={liked} imgStyle={styles.likeIcon} />;
 };
 
-
-const Icon = ({ imgStyle, id }) => {
-  const [likeIcon, SetLikeIcon] = useState("https://img.icons8.com/small/60/D50FBC/hearts.png");
-  const imageLikedUrl = "https://img.icons8.com/material/60/D50FBC/like--v1.png";
-  const imageUrl = "https://img.icons8.com/small/60/D50FBC/hearts.png";
-
-
-
-  console.log(id.id)
-
+const Icon = ({ imgStyle, id, liked }) => {
   const userUid = app.auth().currentUser.uid;
+  const imageLikedUrl =
+    "https://img.icons8.com/material/60/D50FBC/like--v1.png";
+  const imageUrl = "https://img.icons8.com/small/60/D50FBC/hearts.png";
+  const [likeIcon, SetLikeIcon] = useState(imageUrl);
   let [savedRoom, setSavedRoom] = useState("");
+  useEffect(() => {
+    console.log('useEffect called');
+    SetLikeIcon(liked ? imageLikedUrl : imageUrl);
+  },[]);
   const myDoc = doc(db, "User", userUid);
 
   function Create() {
+  console.log(id)
+
     if (likeIcon == imageUrl) {
       SetLikeIcon(imageLikedUrl);
 
-
       updateDoc(myDoc, {
-        "savedRoomsId": arrayUnion(id.id)
+        savedRoomsId: arrayUnion(id),
       });
     } else {
       SetLikeIcon(imageUrl);
 
       updateDoc(myDoc, {
-        "savedRoomsId": arrayRemove(id.id)
+        savedRoomsId: arrayRemove(id),
       });
     }
   }
 
   return (
-    <TouchableOpacity onPress={(savedRoom) => setSavedRoom(id) + Create()} >
+    <TouchableOpacity onPress={(savedRoom) => setSavedRoom(id) + Create()}>
       <Image style={imgStyle} source={{ uri: likeIcon }} />
     </TouchableOpacity>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   trip: {

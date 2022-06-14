@@ -166,7 +166,7 @@ export default function Filters(props) {
     <SafeAreaView style={styles.container}>
       <TouchableOpacity
         style={styles.exit}
-        onPress={() => props.navigation.navigate("Search")}
+        onPress={() => props.navigation.navigate("SearchPage")}
       >
         <Image source={require("../assets/arrow.png")} />
       </TouchableOpacity>
@@ -346,7 +346,7 @@ export default function Filters(props) {
       <TouchableOpacity
         style={styles.button}
         onPress={() =>
-          props.navigation.navigate("Search", {
+          props.navigation.navigate("SearchPage", {
             city: selectedCity,
             day: selectedDay,
             month: selectedMonth,

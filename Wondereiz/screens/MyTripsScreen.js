@@ -20,7 +20,7 @@ export default function MyTrips(props) {
   const userUid = app.auth().currentUser.uid;
 
   let [rooms, setRooms] = useState([]);
-  //let [favourite, setFavourite] = useState(true);
+  let [favourite, setFavourite] = useState(false);
   let q;
 
   const allBtn = {
@@ -34,10 +34,18 @@ export default function MyTrips(props) {
     borderBottomColor: "lightgray",
   };
 
+  if (favourite) {
+    favBtn.borderBottomColor = "magenta";
+    allBtn.borderBottomColor = "lightgray";
+  } else {
+    favBtn.borderBottomColor = "lightgray";
+    allBtn.borderBottomColor = "magenta";
+  }
+
   function RenderRooms(favourite) {
+    setRooms("");
     if (favourite) {
-      favBtn.borderBottomColor = "magenta";
-      allBtn.borderBottomColor = "lightgray";
+      setFavourite(true);
       let savedRooms = [];
       const myDoc = doc(db, "User", userUid);
 
@@ -64,8 +72,7 @@ export default function MyTrips(props) {
           console.log(error.message);
         });
     } else {
-      favBtn.borderBottomColor = "lightgray";
-      allBtn.borderBottomColor = "magenta";
+      setFavourite(false);
       q = query(collection(db, "Room"), where("adminUid", "==", userUid));
       onSnapshot(q, (snapshot) => {
         let tempRooms = [];
@@ -81,7 +88,6 @@ export default function MyTrips(props) {
   useEffect(() => {
     RenderRooms(false);
   }, []);
-
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.pageNameTxt}>My Trips</Text>
@@ -99,14 +105,20 @@ export default function MyTrips(props) {
           rooms.map((data, idx) => (
             <Post
               post={{
+                id: rooms[idx].id,
                 trip_picture: rooms[idx].mainPicture,
                 trip: rooms[idx].cityFrom + " - " + rooms[idx].cityTo,
                 caption: rooms[idx].travelDate,
+                liked: favourite,
               }}
             />
           ))
         ) : (
-          <Text>No trips</Text>
+          // <Text style={styles.noTripsTxt}>No trips</Text>
+          <Image
+            source={require("../assets/loading1.gif")}
+            style={{ width: 300, height: 250, alignSelf:'center', marginTop: 50 }}
+          />
         )}
       </ScrollView>
       <BottomTabs navigation={props.navigation} />
@@ -140,5 +152,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: "center",
     marginBottom: 20,
+  },
+  noTripsTxt: {
+    alignSelf: "center",
+    fontSize: 25,
+    fontWeight: "400",
+    marginTop: 100,
   },
 });
