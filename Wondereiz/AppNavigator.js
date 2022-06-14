@@ -15,8 +15,9 @@ import TripDetailsScreen from "./screens/TripDetailsScreen";
 import FiltersScreen from "./screens/FiltersScreen";
 import AboutMeScreen from './screens/AboutMeScreen';
 import ProfilePictureScreen from './screens/ProfilePictureScreen';
+import NotificationsPage from "./screens/NotificationsScreen";
 
-const {Navigator, Screen} = createStackNavigator();
+const { Navigator, Screen } = createStackNavigator();
 
 const AppNavigator = () => (
     <NavigationContainer>
@@ -32,6 +33,7 @@ const AppNavigator = () => (
             <Screen name="TransitionPage2" component={TransitionPage2Screen} />
             <Screen name="TripDetails" component={TripDetailsScreen} />
             <Screen name="Filters" component={FiltersScreen} />
+            <Screen name="Notifications" component={NotificationsPage} />
             <Screen name="GroupInfoScreen" component={GroupInfoScreen} />
             <Screen name="AboutMe" component={AboutMeScreen} />
             <Screen name="ProfilePicUpload" component={ProfilePictureScreen} />
