@@ -14,19 +14,10 @@ import { app, db } from "../Config";
 import Post from "../components/Post"
 import "firebase/compat/firestore";
 import { useCollectionData } from "react-firebase-hooks/firestore";
+import Loading from "../components/Loading";
 
-
-const wait = (timeout) => {
-  return new Promise(resolve => setTimeout(resolve, timeout));
-}
 
 export default function Home(props) {
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
 
   const userUid = app.auth().currentUser.uid;
 
@@ -81,21 +72,14 @@ export default function Home(props) {
   return (
     <SafeAreaView style={styles.container}>
       <Header />
-      <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-        }
-      >
+      <ScrollView>
 
         {trips ?
           <View>
             {trips && trips.map((trp, trpIndex) => (<DisplayTrips key={trpIndex} trip={trp} />))}
           </View>
           : (
-            <Text>No trips</Text>
+            <Loading />
           )}
       </ScrollView>
       <BottomTabs navigation={props.navigation}></BottomTabs>
