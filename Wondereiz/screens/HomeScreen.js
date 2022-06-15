@@ -73,6 +73,7 @@ export default function Home(props) {
         trip: cityFrom + " - " + cityTo,
         //     trip: trips[0].cityFrom + " - " + trips[0].cityTo,
         caption: travelDate,
+        props: props
       }
       } />
     );
