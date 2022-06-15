@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 import Post from "../components/Post";
 import { ScrollView } from "react-native-gesture-handler";
+import Loading from "../components/Loading";
 
 export default function MyTrips(props) {
   const userUid = app.auth().currentUser.uid;
@@ -115,10 +116,7 @@ export default function MyTrips(props) {
           ))
         ) : (
           // <Text style={styles.noTripsTxt}>No trips</Text>
-          <Image
-            source={require("../assets/loading1.gif")}
-            style={{ width: 300, height: 250, alignSelf:'center', marginTop: 50 }}
-          />
+          <Loading />
         )}
       </ScrollView>
       <BottomTabs navigation={props.navigation} />
