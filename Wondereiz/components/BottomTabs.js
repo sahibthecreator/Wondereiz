@@ -57,7 +57,8 @@ const BottomTabs = (props) => {
           style={styles.icon}
         />
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => props.navigation.navigate("Profile")} >
         <Image
           source={{
             uri: icons.Profile.active,
