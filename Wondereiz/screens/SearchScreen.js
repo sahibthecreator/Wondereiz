@@ -1,12 +1,38 @@
-import React from 'react';
-import {View,Text,StyleSheet,SafeAreaView,Image, TouchableOpacity} from 'react-native';
+import React, { useState } from 'react';
+import {View,Text,StyleSheet,SafeAreaView,Image, TouchableOpacity, FlatList} from 'react-native';
 import BottomTabs from "../components/BottomTabs";
+import SearchBox from "../components/SearchBox";
 import PropTypes from 'prop-types';
 import { TextInput } from 'react-native-gesture-handler';
+import firebase from 'firebase/compat';
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+require('firebase/firestore');
 
 export default function SearchPage(props) {
-    // const SearchScreen = (props) => {
+        const [Room, setRoom] = useState([])
 
+        const fetchRoom = (search) => {
+          firebase.firestore()
+          .collection('Room')
+          where('name', '=>', search)
+          .get()
+          .then((snapshot) => {
+            let users = snapshot.docs.map(doc => {
+                const data = doc.data();
+                const id = doc.id;
+                return {id, ...data }
+            });
+            setRoom(Room);
+          })
+        }
+        // const SearchScreen = (props) => {
         // const [searchQuery, setSearchQuery] = React.useState('');
         // const onChangeSearch = query => setSearchQuery(query);
       
@@ -19,8 +45,16 @@ export default function SearchPage(props) {
           /> */}
             <View style={styles.header}>
               <View style={styles.searchBar}> 
-                <Image source={require('../assets/search.png')} style={styles.searchIcon}/>
-                <TextInput placeholder="Search Here"/>
+                <SearchBox navigation={props.navigation} onChangeText={(search)=> fetchRoom(search)}/>
+                {/* <TextInput onChangeText={(search)=> fetchRoom(search)} placeholder="Search Here"/> */}
+                <FlatList 
+                    numColumns={1}
+                    horizonta={false}
+                    data={Room}
+                    renderItem={({item}) =>
+                    <Text>{item.cityFrom}</Text>
+                  }
+                />
                 <TouchableOpacity onPress={() => props.navigation.navigate("Filters") }>
                      <Image source={require('../assets/filter.png')}  style={styles.FilterIcon} />
                 </TouchableOpacity>
@@ -97,13 +131,15 @@ const styles = StyleSheet.create({
       flex: 1,
       alignItems: "center",
       //justifyContent: "space-around",
-      //justifyContent: 'center',
+      justifyContent: 'center',
       backgroundColor: "white",
     },
     header: {
-      marginTop: 100,
-      marginLeft: 1,
+      marginTop: 50,
+      marginLeft: 20,
       marginRight: 30,
+      // justifyContent: "space-around",
+      
       marginBottom: 20,
       // height: '30%',
     //   flex: 1,
@@ -112,27 +148,22 @@ const styles = StyleSheet.create({
     },
     searchBar: {
       alignItems: "center",
-      backgroundColor: '#e4e6eb',
+      // backgroundColor: '#e4e6eb',
       height: 30,
-      width: 300,
+      // width: 300,
       borderRadius: 20,
       flexDirection: 'row',
-      
     },
-    searchIcon:{
-      height: 30,
-      width:30,
-      backgroundColor: '#e4e6eb',
-    },
+    
     FilterIcon: {
         width: 30,
       height: 30,
-      marginLeft: 200,
+      marginLeft: 10,
     },
     main: {
       //  height: '50%',
        flex:1,
-       height: '80%',
+      //  height: '80%',
   
     },
     recommandation: {

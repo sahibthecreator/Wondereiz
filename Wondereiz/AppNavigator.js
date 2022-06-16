@@ -6,6 +6,7 @@ import RegisterScreen from './screens/RegisterScreen';
 import ForgetPasswordScreen from './screens/ForgetPasswordScreen';
 import HomeScreen from './screens/HomeScreen';
 import BottomTabs from "./components/BottomTabs";
+import SearchBox from './components/SearchBox';
 import GroupInfoScreen from "./screens/GroupInfoScreen";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import MyTripsScreen from './screens/MyTripsScreen'
