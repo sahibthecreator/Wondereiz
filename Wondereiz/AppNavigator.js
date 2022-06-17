@@ -39,8 +39,9 @@ const AppNavigator = () => (
             <Screen name="AboutMe" component={AboutMeScreen} />
             <Screen name="ProfilePicUpload" component={ProfilePictureScreen} />
             <Screen name="Profile" component={ProfileScreen} />
+            <Screen name="SearchPage" component={SearchPage} />
+
         </Navigator>
     </NavigationContainer>
-);
-
+)
 export default AppNavigator;
