@@ -28,16 +28,52 @@ const Post = ({ post }) => {
 };
 
 const PostHeader = ({ post }) => (
-  <View style={styles.container}>
-    <View style={styles.content}>
+  <View
+    style={{
+      top: 35,
+      margin: 10,
+      paddingTop: 15,
+      paddingBottom: 15,
+      borderRadius: 30,
+      backgroundColor: "white",
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+    }}
+  >
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        margin: 5,
+        alignItems: "center",
+      }}
+    >
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <Image source={{ uri: post.trip_picture }} style={styles.trip} />
         <View style={{ flexDirection: "column" }}>
-          <Text style={styles.tripInfo}>
+          <Text
+            style={{
+              color: "#8736AA",
+              fontWeight: "bold",
+              marginLeft: 15,
+            }}
+          >
             {post.trip}
           </Text>
 
-          <Text style={styles.caption}>
+          <Text
+            style={{
+              color: "#BFBFBF",
+              fontWeight: "500",
+              marginLeft: 15,
+            }}
+          >
             {post.caption}
           </Text>
         </View>
@@ -60,11 +96,11 @@ const Icon = ({ imgStyle, id, liked }) => {
   useEffect(() => {
     console.log('useEffect called');
     SetLikeIcon(liked ? imageLikedUrl : imageUrl);
-  }, []);
+  },[]);
   const myDoc = doc(db, "User", userUid);
 
   function Create() {
-    console.log(id)
+  console.log(id)
 
     if (likeIcon == imageUrl) {
       SetLikeIcon(imageLikedUrl);
@@ -100,38 +136,6 @@ const styles = StyleSheet.create({
     height: 30,
     bottom: 15,
   },
-  container: {
-    top: 35,
-    margin: 10,
-    paddingTop: 15,
-    paddingBottom: 15,
-    borderRadius: 30,
-    backgroundColor: "white",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  content: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    margin: 5,
-    alignItems: "center",
-  },
-  tripInfo: {
-    color: "#8736AA",
-    fontWeight: "bold",
-    marginLeft: 15,
-  },
-  caption: {
-    color: "#BFBFBF",
-    fontWeight: "500",
-    marginLeft: 15,
-  }
 });
 
 export default Post;
