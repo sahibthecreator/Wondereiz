@@ -7,7 +7,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { app, db } from "../Config"
 import {
@@ -56,69 +56,71 @@ export default function AboutMe(props) {
 
   return(
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => props.navigation.navigate('Register')}>
-          <Image source={require("../assets/arrow.png")}/>
-        </TouchableOpacity>
-        <Text style={styles.caption}>About Me</Text>
-      </View>
-      <View style={styles.content}>
-        <Text style={styles.bio}>Write about your interests and what kind of travel and what kind of travel buddies you want to meet.</Text>
-        <TextInput
-          style={styles.input}
-          multiline={true}
-          numberOfLines={40}
-          placeholder="Enter text..." 
-          onChangeText={(bio) => setBio(bio)}
-          value={bio}
-          placeholderTextColor="#70706a"
-          autoCapitalize="sentences"
-        />
-        <Text style={styles.preference}>Who I want to meet</Text>
-        <Text style={styles.gender}>Gender</Text>
-        <View style={styles.section}>
-          <TouchableOpacity
-            style={preference === "male" ? styles.selected : styles.button}
-            onPress={(preference) => setPreference("male")}
-          >
-            <Image style={styles.icon} source={require("../assets/male_icon.png")}/>
-            <Text style={styles.btnText}>Male</Text>
+      <ScrollView>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => props.navigation.navigate('Register')}>
+            <Image source={require("../assets/arrow.png")}/>
           </TouchableOpacity>
-          <TouchableOpacity 
-            style={preference === "female" ? styles.selected : styles.button}
-            onPress={(preference) => setPreference("female")}
-          >
-            <Image style={styles.icon} source={require("../assets/female_icon.png")}/>
-            <Text style={styles.btnText}>Female</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={preference === "Not specified" ? styles.selected : styles.button}
-            onPress={(preference) => setPreference("Not specified")}
-          >
-            <Text style={styles.btnText}>Not specified</Text>
-          </TouchableOpacity>
+          <Text style={styles.caption}>About Me</Text>
         </View>
-        <Text style={styles.sliderTxt}>Age: {preferredAge}</Text>
-        <Text style={{ fontSize: 12, marginLeft: 260 }}>15 - 60+</Text>
-        <Slider
-          style={styles.slider}
-          minimumValue={15}
-          maximumValue={60}
-          minimumTrackTintColor="#bd2aba"
-          maximumTrackTintColor="darkgray"
-          thumbTintColor="#b61fb5"
-          value={1}
-          onValueChange={(value) => setPreferredAge(parseInt(value))}
-        />
-        <TouchableOpacity 
-          style={styles.submit} 
-          onPress={() => {
-            Validate();
-        }}>
-        <Text style={styles.submitText}>Continue</Text>
-        </TouchableOpacity>
-        <Text style={styles.errMsg}>{error}</Text>
-      </View> 
+        <View style={styles.content}>
+          <Text style={styles.bio}>Write about your interests and what kind of travel and what kind of travel buddies you want to meet.</Text>
+          <TextInput
+            style={styles.input}
+            multiline={true}
+            numberOfLines={40}
+            placeholder="Enter text..." 
+            onChangeText={(bio) => setBio(bio)}
+            value={bio}
+            placeholderTextColor="#70706a"
+            autoCapitalize="sentences"
+          />
+          <Text style={styles.preference}>Who I want to meet</Text>
+          <Text style={styles.gender}>Gender</Text>
+          <View style={styles.section}>
+            <TouchableOpacity
+              style={preference === "male" ? styles.selected : styles.button}
+              onPress={(preference) => setPreference("male")}
+            >
+              <Image style={styles.icon} source={require("../assets/male_icon.png")}/>
+              <Text style={styles.btnText}>Male</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={preference === "female" ? styles.selected : styles.button}
+              onPress={(preference) => setPreference("female")}
+            >
+              <Image style={styles.icon} source={require("../assets/female_icon.png")}/>
+              <Text style={styles.btnText}>Female</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={preference === "Not specified" ? styles.selected : styles.button}
+              onPress={(preference) => setPreference("Not specified")}
+            >
+              <Text style={styles.btnText}>Not specified</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.sliderTxt}>Age: {preferredAge}</Text>
+          <Text style={{ fontSize: 12, marginLeft: 260 }}>15 - 60+</Text>
+          <Slider
+            style={styles.slider}
+            minimumValue={15}
+            maximumValue={60}
+            minimumTrackTintColor="#bd2aba"
+            maximumTrackTintColor="darkgray"
+            thumbTintColor="#b61fb5"
+            value={1}
+            onValueChange={(value) => setPreferredAge(parseInt(value))}
+          />
+          <TouchableOpacity 
+            style={styles.submit} 
+            onPress={() => {
+              Validate();
+          }}>
+          <Text style={styles.submitText}>Continue</Text>
+          </TouchableOpacity>
+          <Text style={styles.errMsg}>{error}</Text>
+        </View> 
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -209,7 +211,7 @@ const styles = StyleSheet.create({
     width: 350, 
     height: 30, 
     alignSelf: 'center',
-    marginBottom: 10,
+    marginBottom: 0,
   },
   sliderTxt: {
     fontSize: 12, 
@@ -224,7 +226,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     width: "100%",
     height: 40,
-    marginTop: 20,
+    marginTop: 60,
   },
   submitText: {
    color: "white",

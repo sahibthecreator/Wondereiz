@@ -1,14 +1,13 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Button,
   View,
   Text,
   StyleSheet,
   Image,
   TouchableOpacity,
 } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import { SafeAreaView, withSafeAreaInsets } from "react-native-safe-area-context";
+import { ScrollView, TextInput } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
 import BottomTabs from "../components/BottomTabs";
 import { app, db } from "../Config"
 import {
@@ -25,7 +24,6 @@ export default function Profile(props) {
   let [dOb, setDoB] = useState("");
   let [city, setCity] = useState("");
   let [bio, setBio] = useState("");
-  let [age, setAge] = useState("");
   let userUid;
 
   if(props.currentUser == null) {
@@ -49,7 +47,6 @@ export default function Profile(props) {
           setCity(snapshot.data().city);
           setBio(snapshot.data().bio);
           setUpBio(bio);
-          setAge(AgeCalc(dOb));
         } else {
           console.log("No data");
         }
@@ -85,6 +82,7 @@ export default function Profile(props) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView>
         <View style={styles.content}>
           <View style={{flexDirection: "row"}}>
             <Text style={styles.caption}>User</Text>
@@ -110,12 +108,13 @@ export default function Profile(props) {
             <Text style={{alignSelf: "center", fontSize: 15}}>{city}</Text>
           </View>
         </View>
-          <View
-            style={{
-              borderBottomWidth: 1,
-              borderColor: "#cacaca"
-            }}/>
-          <View style={styles.content}>
+        <View
+          style={{
+            borderBottomWidth: 1,
+            borderColor: "#cacaca"
+          }}
+        />
+        <View style={styles.content}>
           <View style={styles.box}>
             <Text style={styles.bio}>About me</Text>
             {props.currentUser == null 
@@ -125,7 +124,7 @@ export default function Profile(props) {
                   multiline={true}
                   placeholder={bio} 
                   onChangeText={(updatedBio) => setUpBio(updatedBio)}
-                  value={updatedBio}
+                  value={bio}
                   placeholderTextColor="#70706a"
                   autoCapitalize="sentences"
                 />
@@ -145,8 +144,9 @@ export default function Profile(props) {
               <View></View>
           }
           <Text style={{color: "red"}}>{error}</Text>
-      </View>
-        <BottomTabs navigation={props.navigation}></BottomTabs>
+        </View>
+      </ScrollView>
+      <BottomTabs navigation={props.navigation}></BottomTabs>
     </SafeAreaView>
   )
 }
@@ -193,7 +193,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     padding: 3,
-    
   },
   bio: {
     marginTop: 10,
