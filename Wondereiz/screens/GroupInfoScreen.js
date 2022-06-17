@@ -86,7 +86,13 @@ export default function GroupInfoScreen(props) {
       <View style={styles.divider} />
 
       <ScrollView>
-        <Text style={styles.numberOfPartecipants}>
+        <Text style={{
+          color: "#8736AA",
+          fontSize: 18,
+          fontWeight: '500',
+          marginLeft: 30,
+          marginTop: 35
+        }}>
           {partecipants?.length} Partecipants
         </Text>
 
@@ -163,12 +169,5 @@ const styles = StyleSheet.create({
     position: "relative"
   },
   iconPartecipant: {
-  },
-  numberOfPartecipants: {
-    color: "#8736AA",
-    fontSize: 18,
-    fontWeight: '500',
-    marginLeft: 30,
-    marginTop: 35
   }
 });

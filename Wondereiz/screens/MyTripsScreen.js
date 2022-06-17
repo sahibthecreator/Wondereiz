@@ -1,6 +1,8 @@
-import React, { Component, useEffect, useState } from "react";
-import { Text, StyleSheet, Image, TouchableOpacity, View, Button} from "react-native";
+import React, { Component, useState } from "react";
+import { Text, StyleSheet, Image, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
+import { onAuthStateChanged } from "firebase/auth";
 import { app, db } from "../Config";
 import BottomTabs from "../components/BottomTabs";
 import {
@@ -13,14 +15,14 @@ import {
 } from "firebase/firestore";
 import Post from "../components/Post";
 import { ScrollView } from "react-native-gesture-handler";
-import Loading from "../components/Loading";
 
 export default function MyTrips(props) {
-
+  //console.log("User UID: " + app.auth().currentUser.uid);
   const userUid = app.auth().currentUser.uid;
 
   let [rooms, setRooms] = useState([]);
-  let [favourite, setFavourite] = useState(false);
+  let [favourite, setFavourite] = useState(true);
+
   let q;
 
   const allBtn = {
@@ -37,67 +39,54 @@ export default function MyTrips(props) {
   if (favourite) {
     favBtn.borderBottomColor = "magenta";
     allBtn.borderBottomColor = "lightgray";
+    let savedRooms = [];
+    const myDoc = doc(db, "User", userUid);
+
+    getDoc(myDoc)
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          savedRooms = snapshot.data().savedRoomsId;
+
+          q = query(collection(db, "Room"), where("id", "in", savedRooms));
+          onSnapshot(q, (snapshot) => {
+            let tempRooms = [];
+            snapshot.docs.forEach((doc) => {
+              tempRooms.push(doc.data());
+            });
+            setRooms(tempRooms);
+            //console.log(rooms);
+          });
+          //console.log(savedRooms);
+        } else {
+          console.log("No data");
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
   } else {
     favBtn.borderBottomColor = "lightgray";
     allBtn.borderBottomColor = "magenta";
-  }
-
-  function RenderRooms(favourite) {
-    setRooms("");
-    if (favourite) {
-      setFavourite(true);
-      let savedRooms = [];
-      const myDoc = doc(db, "User", userUid);
-
-      getDoc(myDoc)
-        .then((snapshot) => {
-          if (snapshot.exists) {
-            savedRooms = snapshot.data().savedRoomsId;
-
-            q = query(collection(db, "Room"), where("id", "in", savedRooms));
-            onSnapshot(q, (snapshot) => {
-              let tempRooms = [];
-              snapshot.docs.forEach((doc) => {
-                tempRooms.push(doc.data());
-              });
-              setRooms(tempRooms);
-              //console.log(rooms);
-            });
-            //console.log(savedRooms);
-          } else {
-            console.log("No data");
-          }
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
-    } else {
-      setFavourite(false);
-      q = query(collection(db, "Room"), where("adminUid", "==", userUid));
-      onSnapshot(q, (snapshot) => {
-        let tempRooms = [];
-        snapshot.docs.forEach((doc) => {
-          tempRooms.push(doc.data());
-        });
-        setRooms(tempRooms);
-        //console.log(rooms);
+    q = query(collection(db, "Room"), where("adminUid", "==", userUid));
+    onSnapshot(q, (snapshot) => {
+      let tempRooms = [];
+      snapshot.docs.forEach((doc) => {
+        tempRooms.push(doc.data());
       });
-    }
+      setRooms(tempRooms);
+      //console.log(rooms);
+    });
   }
-
-  useEffect(() => {
-    RenderRooms(false);
-  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.pageNameTxt}>My Trips</Text>
       <View style={{ width: "100%", flexDirection: "row" }}>
-        <TouchableOpacity style={allBtn} onPress={() => RenderRooms(false)}>
+        <TouchableOpacity style={allBtn} onPress={() => setFavourite(false)}>
           <Text style={styles.containerTxt}>All</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={favBtn} onPress={() => RenderRooms(true)}>
+        <TouchableOpacity style={favBtn} onPress={() => setFavourite(true)}>
           <Text style={styles.containerTxt}>Favourite</Text>
         </TouchableOpacity>
       </View>
@@ -106,18 +95,14 @@ export default function MyTrips(props) {
           rooms.map((data, idx) => (
             <Post
               post={{
-                id: rooms[idx].id,
                 trip_picture: rooms[idx].mainPicture,
                 trip: rooms[idx].cityFrom + " - " + rooms[idx].cityTo,
                 caption: rooms[idx].travelDate,
-                liked: favourite,
-                props: props
               }}
             />
           ))
         ) : (
-          // <Text style={styles.noTripsTxt}>No trips</Text>
-          <Loading />
+          <Text>No trips</Text>
         )}
       </ScrollView>
       <BottomTabs navigation={props.navigation} />
@@ -152,11 +137,4 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
   },
-  noTripsTxt: {
-    alignSelf: "center",
-    fontSize: 25,
-    fontWeight: "400",
-    marginTop: 100,
-  },
 });
-
