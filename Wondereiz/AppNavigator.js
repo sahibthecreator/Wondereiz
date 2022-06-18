@@ -17,6 +17,7 @@ import AboutMeScreen from './screens/AboutMeScreen';
 import ProfilePictureScreen from './screens/ProfilePictureScreen';
 import NotificationsPage from "./screens/NotificationsScreen";
 import ProfileScreen from './screens/ProfileScreen';
+import SearchPage from "./screens/SearchScreen";
 
 const { Navigator, Screen } = createStackNavigator();
 

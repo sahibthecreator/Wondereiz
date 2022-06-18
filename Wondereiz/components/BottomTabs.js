@@ -32,7 +32,7 @@ const BottomTabs = (props) => {
           style={styles.icon}
         />
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => props.navigation.navigate("SearchPage")} >
         <Image
           source={{
             uri: icons.Search.active,
