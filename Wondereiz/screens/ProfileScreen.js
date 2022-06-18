@@ -59,9 +59,9 @@ export default function Profile(props) {
   const updateBio = () => {
     console.log("bio: "+bio);
     console.log("updatedBio: "+updateBio);
-
+    setError("");
+    
     if (bio !== updatedBio) {
-
     const myDoc = doc(db, "User", userUid);
 
     let docData = {
@@ -124,7 +124,7 @@ export default function Profile(props) {
                   multiline={true}
                   placeholder={bio} 
                   onChangeText={(updatedBio) => setUpBio(updatedBio)}
-                  value={bio}
+                  value={updatedBio}
                   placeholderTextColor="#70706a"
                   autoCapitalize="sentences"
                 />

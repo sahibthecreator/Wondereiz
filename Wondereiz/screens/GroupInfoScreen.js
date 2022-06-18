@@ -32,12 +32,11 @@ export default function GroupInfoScreen(props) {
   });*/
 
   function DisplayPartecipants(props) {
-    const { username } = props.partecipant;
+    const { username, profilePicture } = props.partecipant;
 
     return (
       <PartecipantBox post={{
-        partecipant_picture:
-          "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Amsterdam_Zentrum_20091106_075.JPG/1200px-Amsterdam_Zentrum_20091106_075.JPG",
+        partecipant_picture: profilePicture,
         caption: username,
       }
       } />
