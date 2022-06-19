@@ -1,10 +1,33 @@
-import React, { Component } from "react";
+import React, { Component, useState} from "react";
 import { Button, View, Text, StyleSheet, SafeAreaView } from "react-native";
 import { app } from "../Config";
+import DatePicker from "react-native-neat-date-picker";
+
 
 export default function Register(props) {
+  //DatePicker ----------------------
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const toggleDatePicker = () => {
+    setShowDatePicker(!showDatePicker);
+  };
+
+  const onConfirm = (date) => {
+    toggleDatePicker();
+    console.log(date.dateString); // you can get date from here
+  };
+  //------------------------------------------
+
   return (
     <SafeAreaView style={{ alignItems: 'center' }}>
+      <Button title={"open"} onPress={toggleDatePicker} />
+      <DatePicker
+        isVisible={showDatePicker}
+        mode={"single"}
+        onCancel={toggleDatePicker}
+        onConfirm={onConfirm}
+      />
+
       <Text>Register page</Text>
       <Button
         title="Navigate"
