@@ -30,156 +30,74 @@ export default function NotificationsPage(props) {
 
   let q;
 
-  // useEffect(() => {
-  //   let roomId = [];
-  //   const myDoc = doc(db, "User", userUid);
-  //   let tempRooms = [];
-
-  //   getDoc(myDoc) // Getting notifications array from user based on userUid
-  //     .then((snapshot) => {
-  //       if (snapshot.exists) {
-  //         roomId = snapshot.data().newMessages;
-  //         console.log("RoomId " + roomId);
-
-  //         q = query(collection(db, "Room"), where("id", "in", roomId)); // getting room details based on room id
-  //         onSnapshot(q, (snapshot) => {
-  //           snapshot.docs.forEach((room) => {
-  //             console.log("----------------------------------------");
-  //             console.log("room Details " + room.data().id);
-
-  //             q = query(
-  //               collection(db, "Messages"),
-  //               where("roomId", "==", room.data().id),
-  //               limit(1)
-  //             );
-  //             onSnapshot(q, (snapshot) => {
-  //               // getting messages which belongs to room id
-  //               console.log("----------------------------------------");
-  //               console.log(
-  //                 "Message Details user id :  " + snapshot.docs[0].data().uid
-  //               );
-
-  //               //user name
-  //               const userDoc = doc(db, "User", snapshot.docs[0].data().uid);
-  //               getDoc(userDoc).then((user) => {
-  //                 if (user.exists) {
-  //                   console.log("----------------------------------------");
-  //                   console.log("Sender name :  " + user.data().firstName);
-  //                   const roomDetails = room.data();
-  //                   const combinedDetails = {
-  //                     ...roomDetails,
-  //                     text: snapshot.docs[0].data().text,
-  //                     sendersName: user.data().firstName,
-  //                   };
-  //                   tempRooms.push(combinedDetails);
-  //                   console.log("----------------------------------------");
-  //                   setResult(tempRooms);
-  //                   console.log(result);
-  //                 }
-  //               });
-  //             });
-  //           });
-  //         });
-  //       } else {
-  //         console.log("No data");
-  //       }
-  //     })
-  //     .then(() => {
-  //       //console.log(result);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error.message);
-  //     });
-  // }, []);
+  const getRoomIds = () => {};
 
   useEffect(() => {
-    let roomIds = [];
-    const myDoc = doc(db, "User", userUid);
-    let tempRooms = [];
-    getDoc(myDoc).then((snapshot) => {
+    let roomIds = ["room6"];
+    let rooms = [];
+    let messages = [];
+    let results = [];
+
+    const myUser = doc(db, "User", userUid);
+
+    getDoc(myUser).then((snapshot) => {
       roomIds = snapshot.data().newMessages;
-      q = query(collection(db, "Room"), where("id", "in", roomIds));
-      onSnapshot(q, (roomSnapshot) => {
-        roomSnapshot.docs.forEach((room) => {
-          q = query(
-            collection(db, "Messages"),
-            where("roomId", "==", room.data().id)
-          );
-          onSnapshot(q, (messageSnapshot) => {
-            getDoc(doc(db, "User", messageSnapshot.docs[0].data().uid)).then(
-              (senderUserSnapshot) => {
-                const combinedResult = {
-                  mainPicture: room.data().mainPicture,
-                  cityFrom: room.data().cityFrom,
-                  cityTo: room.data().cityTo,
-                  travelDate: room.data().travelDate,
-                  sendersName: senderUserSnapshot.data().firstName,
-                  text: messageSnapshot.docs[0].data().text,
-                  createdAtTime: messageSnapshot.docs[0].data().createdAtTime
-                }
-                tempRooms.push(combinedResult);
-                console.log(tempRooms);
-                setResult(tempRooms)
+
+      Promise.all(roomIds).then((roomIds) => {
+        let q = query(collection(db, "Room"), where("id", "in", roomIds));
+        onSnapshot(q, (snapshot) => {
+          if (snapshot) {
+            snapshot.docs.forEach((room) => {
+              rooms.push(room.data());
+            });
+            Promise.all(rooms).then((rooms) => {
+              rooms.forEach((room) => {
+                q = query(
+                  collection(db, "Messages"),
+                  where("roomId", "==", room.id)
+                );
+                onSnapshot(q, (snapshot) => {
+                  if (snapshot) {
+                    messages.push({
+                      ...room,
+                      text: snapshot.docs[0].data().text,
+                      senderUid: snapshot.docs[0].data().uid,
+                    });
+                    Promise.all(messages).then((messages) => {
+                      const sender = doc(
+                        db,
+                        "User",
+                        messages[messages.length - 1].senderUid
+                      );
+                      getDoc(sender).then((snapshot) => {
+                        if (snapshot.exists) {
+                          results.push({
+                            ...messages[messages.length - 1],
+                            sendersName: snapshot.data().firstName,
+                          });
+                          Promise.all(results).then((results) => {
+                            setResult(results);
+                            console.log(result);
+                          });
+                        }
+                      });
+                    });
+                  }
+                });
               });
-          });
+            });
+          }
         });
       });
     });
-    //setResult(tempRooms);
   }, []);
-  
-  // useEffect(() => {
-  //   let roomIds = [];
-  //   const myDoc = doc(db, "User", userUid);
-  //   let tempRooms = [];
-  //   getDoc(myDoc)
-  //   .then((snapshot) => {
-  //     roomIds = snapshot.data().newMessages;
-  //     roomIds.forEach((e, indx) => {
-  //       console.log("-------------");
-  //       console.log(e);
-  //       q = query(collection(db, "Room"), where("id", "==", e));
-  //       onSnapshot(q, (roomSnapshot) => {
-  //         //console.log(roomSnapshot);
-  //         const room = roomSnapshot.docs[0];
-  //         //console.log(room.data());
-  //           q = query(
-  //             collection(db, "Messages"),
-  //             where("roomId", "==", room.data().id)
-  //           );
-  //           onSnapshot(q, (messageSnapshot) => {
-  //             getDoc(doc(db, "User", messageSnapshot.docs[0].data().uid)).then(
-  //               (senderUserSnapshot) => {
-  //                 const combinedResult = {
-  //                   mainPicture: room.data().mainPicture,
-  //                   cityFrom: room.data().cityFrom,
-  //                   cityTo: room.data().cityTo,
-  //                   travelDate: room.data().travelDate,
-  //                   sendersName: senderUserSnapshot.data().firstName,
-  //                   text: messageSnapshot.docs[0].data().text,
-  //                   createdAtTime: messageSnapshot.docs[0].data().createdAtTime,
-  //                 };
-  //                 tempRooms.push(combinedResult);
-  //                 //console.log(tempRooms);
-  //               }
-  //             );
-  //           });
-  //       });
-  //     });
-  //   })
-  //   .then(() =>{
-  //     console.log(tempRooms);
-  //     setResult(tempRooms);
-  //   })
-
-  // }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.pageNameTxt}>Messages</Text>
 
       <ScrollView>
-        {result ? (
+        {result.length !== 0 ? (
           result.map((data, idx) => (
             <TouchableOpacity
               style={styles.messageBox}
