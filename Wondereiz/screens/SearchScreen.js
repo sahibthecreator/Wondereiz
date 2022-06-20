@@ -51,6 +51,24 @@ export default function SearchPage(props) {
     });
   }, []);
 
+  function getResultRooms(query){
+    setResultRooms(
+      rooms.filter((room) => {
+        console.log(props);
+        return (
+          room.cityTo.includes(query) && 
+          props.route.params.day? room.travelDate.includes(props.route.params.day): false &&
+            props.route.params.month? room.travelDate.includes(props.route.params.month): false &&
+            props.route.params.year? room.travelDate.includes(props.route.params.year): false
+            //props.route.params.cityFrom? room.cityFrom.includes(props.route.params.cityFrom): false &&
+            //props.route.params.cityTo? room.cityTo.includes(props.route.params.cityTo): false
+           ||
+          room.cityFrom.includes(query)
+        );
+      })
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -66,15 +84,7 @@ export default function SearchPage(props) {
             onChangeText={(value) => {
               if (value && value.length > 0) {
                 value = value.trim();
-                setResultRooms(
-                  rooms.filter((room) => {
-                    console.log(resultRooms);
-                    return (
-                      room.cityTo.includes(value) ||
-                      room.cityFrom.includes(value)
-                    );
-                  })
-                );
+                getResultRooms(value);
               } else {
                 setResultRooms([]);
               }
