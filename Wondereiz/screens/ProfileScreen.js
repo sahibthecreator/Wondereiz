@@ -85,25 +85,34 @@ export default function Profile(props) {
       <ScrollView>
         <View style={styles.content}>
           <View style={{flexDirection: "row"}}>
-            <Text style={styles.caption}>User</Text>
             {props.currentUser == null 
               ? 
-                <TouchableOpacity onPress={() => props.navigation.navigate("CreateTrip")}> 
-                  <Image style={styles.icon} source={require("../assets/plus.png")} />
-                </TouchableOpacity> 
+                <>
+                  <Text style={styles.caption}>User</Text>
+                  <TouchableOpacity onPress={() => props.navigation.navigate("CreateTrip")}>
+                    <Image style={styles.icon} source={require("../assets/plus.png")} />
+                  </TouchableOpacity>
+                </> 
               : 
-                <Image style={styles.icon} source={require("../assets/plus.png")} />
+                <>                              
+                  <TouchableOpacity onPress={() => props.navigation.navigate("TripDetails")}>    
+                    <Image style={styles.backIcon} source={require("../assets/arrow.png")} />
+                  </TouchableOpacity> 
+                  <Text style={styles.captionPartp}>Participant Info</Text>
+                </>
+                
             }
           </View>
           <TouchableOpacity>      
             <Image style={styles.prof} source={require("../assets/amsterdam.png")} />
+            <Image style={styles.camera} source={require("../assets/camera.png")}/>
           </TouchableOpacity>
           <View style={{flexDirection: "row", marginTop: 20}}>
-            <Text style={{marginRight: 10, fontWeight: "bold", fontSize: 27}}>{firstName}</Text>
+            <Text style={{marginRight: 10, fontWeight: "bold", fontSize: 27, marginBottom: 5}}>{firstName}</Text>
             <Text style={{fontSize: 27}}>{(AgeCalc(dOb))}</Text>
           </View>
           <Text>placeholder</Text>
-          <View style={{flexDirection: "row", marginBottom: 15}}>
+          <View style={{flexDirection: "row", marginBottom: 15, marginTop: 10}}>
             <Image style={styles.location} source={require("../assets/location.png")} />
             <Text style={{alignSelf: "center", fontSize: 15}}>{city}</Text>
           </View>
@@ -120,7 +129,7 @@ export default function Profile(props) {
             {props.currentUser == null 
               ?
                 <TextInput
-                  style={{marginLeft: 10, marginRight: 10}}
+                  style={{marginLeft: 10, marginRight: 10, fontSize: 15}}
                   multiline={true}
                   placeholder={bio} 
                   onChangeText={(updatedBio) => setUpBio(updatedBio)}
@@ -141,7 +150,7 @@ export default function Profile(props) {
                 <Text style={{color: "white"}}>Update Bio</Text>
               </TouchableOpacity>
             :
-              <View></View>
+              <></>
           }
           <Text style={{color: "red"}}>{error}</Text>
         </View>
@@ -166,6 +175,12 @@ const styles = StyleSheet.create({
     color: "#bd2aba",
     marginLeft: 150,
   },
+  captionPartp: {
+    alignSelf: "center",
+    fontSize: 20,
+    color: "#bd2aba",
+    marginLeft: 70,
+  },
   prof: {
     width: 200,
     height: 200,
@@ -176,6 +191,12 @@ const styles = StyleSheet.create({
   info: {
     marginRight: 10
   },
+  backIcon: {
+    width: 30,
+    height: 30,
+    marginTop: 20,
+    marginBottom: 15,
+  },
   icon: {
     width: 30,
     height: 30,
@@ -183,9 +204,18 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 15,
   },
+  camera: {
+    width: 50,
+    height: 50,
+    position: "absolute",
+    top: 170,
+    left: 210,
+  },
   location: {
-    width: 25,
-    height: 25,
+    width: 28,
+    height: 28,
+    marginRight: 3,
+    right: 4,
   },
   box: {
     marginTop: 30,
@@ -199,7 +229,7 @@ const styles = StyleSheet.create({
     marginBottom: 10, 
     marginLeft: 10, 
     fontWeight: "bold",
-    fontSize: 17,
+    fontSize: 20,
   },
   bttn: {
     marginTop: 10,

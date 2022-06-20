@@ -127,7 +127,7 @@ export default function ProfilePicUpload(props) {
         <ScrollView>
           <View style={{flexDirection: "row"}}>
             <TouchableOpacity onPress={() => props.navigation.navigate('AboutMe')}>
-              <Image source={require("../assets/arrow.png")}/>
+              <Image style={{width: 30, height: 30}} source={require("../assets/arrow.png")}/>
             </TouchableOpacity>
             <Text style={styles.caption}>Profile Picture</Text>
           </View>
@@ -138,6 +138,7 @@ export default function ProfilePicUpload(props) {
             > 
               {(image !== null) && <Image style={styles.icon} source={{ uri: image }}/>}
               {(image === null) && <Image style={styles.icon} source={require("../assets/profilePic.png")} />}
+              <Image style={styles.camera} source={require("../assets/camera.png")}/>
             </TouchableOpacity>
             <Text style={styles.pictureTxt}>Upload a picture of yourself!</Text>
             <Text style={{color: "red", marginTop: 10}}>{error}</Text>
@@ -168,13 +169,20 @@ const styles = StyleSheet.create({
   caption: {
     fontWeight: "bold",
     color: "#8736AA",
-    fontSize: 20,
+    fontSize: 22,
     marginLeft: 80,
   },
   icon: {
     borderRadius: 75,
-    width: 150,
-    height: 150,
+    width: 180,
+    height: 180,
+  },
+  camera: {
+    width: 50,
+    height: 50,
+    position: "absolute",
+    top: 105,
+    left: 110,
   },
   pictureTxt: {
     color: "grey",

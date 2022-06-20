@@ -59,7 +59,7 @@ export default function AboutMe(props) {
       <ScrollView>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => props.navigation.navigate('Register')}>
-            <Image source={require("../assets/arrow.png")}/>
+            <Image style={{width: 30, height: 30}} source={require("../assets/arrow.png")}/>
           </TouchableOpacity>
           <Text style={styles.caption}>About Me</Text>
         </View>
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   caption: {
     fontWeight: "bold",
     color: "#8736AA",
-    fontSize: 20,
+    fontSize: 22,
     marginLeft: 100,
   },
   input: {
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     color: "#8736AA",
     marginTop: 50,
     marginBottom: 40,
-    fontSize: 20,
+    fontSize: 22,
   },
   gender: {
     alignSelf: "flex-start",
