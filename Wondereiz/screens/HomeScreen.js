@@ -20,7 +20,7 @@ const wait = (timeout) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
-export default function Home(props) {
+export default function Home(navigation) {
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
@@ -73,6 +73,7 @@ export default function Home(props) {
         trip: cityFrom + " - " + cityTo,
         //     trip: trips[0].cityFrom + " - " + trips[0].cityTo,
         caption: travelDate,
+        navigation: navigation.navigation
       }
       } />
     );
@@ -98,7 +99,7 @@ export default function Home(props) {
             <Text>No trips</Text>
           )}
       </ScrollView>
-      <BottomTabs navigation={props.navigation}></BottomTabs>
+      <BottomTabs navigation={navigation.navigation}></BottomTabs>
     </SafeAreaView>
   );
 }

@@ -101,7 +101,7 @@ export default function NotificationsPage(props) {
           result.map((data, idx) => (
             <TouchableOpacity
               style={styles.messageBox}
-              onPress={() => props.navigation.navigate("TripDetails")}
+              onPress={() => props.navigation.navigate("ChatScreen", {room: result[idx]})} 
             >
               <Image
                 style={styles.messageImg}
