@@ -10,13 +10,17 @@ import { db } from "../Config";
 import "firebase/compat/firestore";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import PartecipantBox from "../components/PartecipantBox"
+import Loading from "../components/Loading";
 
 
 export default function GroupInfoScreen(props) {
   //let [partecipant, setPartecipant] = useState([]);
   let [partecipant_picture, setPartecipantPicture] = useState([]);
 
-  const ref = collection(db, "User");
+  const ref = collection(db, "User",
+  );
+  //console.log(props.route.params.props.route.params.room.id)
+  console.log(props)
   const q = query(ref);
 
   const [partecipants] = useCollectionData(query(ref));
@@ -46,7 +50,7 @@ export default function GroupInfoScreen(props) {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => props.navigation.goBack()}>
           <Image
             source={{
               uri: "https://img.icons8.com/ios-glyphs/30/D50FBC/back.png",
@@ -57,9 +61,7 @@ export default function GroupInfoScreen(props) {
       </View>
       <View>
         <Image
-          source={{
-            uri: "https://media.cntraveller.com/photos/611be7c7a106ea5ed3099f8c/4:3/w_2664,h_1998,c_limit/amsterdam-mag-jan19-matthew-buck23.jpg",
-          }}
+          source={{ uri: props.route.params.props.route.params.room.mainPicture }}
           style={styles.groupImg}
         />
         <Text style={{
@@ -69,7 +71,7 @@ export default function GroupInfoScreen(props) {
           marginLeft: 100,
           marginTop: 30
         }}>
-          Eindhoven - Amsterdam
+          {props.route.params.props.route.params.room.cityFrom} - {props.route.params.props.route.params.room.cityTo}
         </Text>
         <Text style={{
           color: "#BFBFBF",
@@ -78,7 +80,7 @@ export default function GroupInfoScreen(props) {
           marginLeft: 155,
           marginTop: 8
         }}>
-          15 June 2022
+          {props.route.params.props.route.params.room.travelDate}
         </Text>
       </View>
 
@@ -101,10 +103,10 @@ export default function GroupInfoScreen(props) {
               {partecipants && partecipants.map((prt, prtIndex) => (<DisplayPartecipants key={prtIndex} partecipant={prt} />))}
             </View>
             : (
-              <Text>No Partecipants</Text>
+              <Loading />
             )}
           <View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => console.log("fffff")}>
               <Image
                 source={{
                   uri: "https://img.icons8.com/ios-glyphs/30/D50FBC/back.png",

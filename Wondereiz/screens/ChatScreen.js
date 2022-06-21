@@ -181,10 +181,10 @@ export default function Chat(props) {
             style={{ flex: 1 }}
           />
         </TouchableOpacity>
-        <Text style={styles.headerTxt}>
+        <Text style={styles.headerTxt} onPress={() => props.navigation.navigate("GroupInfoScreen", { props })}>
           {props.route.params.room.cityFrom} - {props.route.params.room.cityTo}
         </Text>
-        <Image style={{width: 50, height: 50, borderRadius: 40}} source={{uri : props.route.params.room.mainPicture}}/>
+        <Image style={{ width: 50, height: 50, borderRadius: 40 }} source={{ uri: props.route.params.room.mainPicture }} />
       </View>
       <KeyboardAvoidingView
         style={styles.displayedMessages}
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     padding: 15,
-    
+
     //justifyContent: "flex-end",
     //marginBottom: 0,
     //position: "absolute",
