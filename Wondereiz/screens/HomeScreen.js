@@ -14,10 +14,19 @@ import { app, db } from "../Config";
 import Post from "../components/Post"
 import "firebase/compat/firestore";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import Loading from "../components/Loading";
 
 
-export default function Home(props) {
+const wait = (timeout) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+}
+
+export default function Home(navigation) {
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
 
   const userUid = app.auth().currentUser.uid;
 
@@ -64,7 +73,7 @@ export default function Home(props) {
         trip: cityFrom + " - " + cityTo,
         //     trip: trips[0].cityFrom + " - " + trips[0].cityTo,
         caption: travelDate,
-        props: props
+        navigation: navigation.navigation
       }
       } />
     );
@@ -73,17 +82,24 @@ export default function Home(props) {
   return (
     <SafeAreaView style={styles.container}>
       <Header />
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      >
 
         {trips ?
           <View>
             {trips && trips.map((trp, trpIndex) => (<DisplayTrips key={trpIndex} trip={trp} />))}
           </View>
           : (
-            <Loading />
+            <Text>No trips</Text>
           )}
       </ScrollView>
-      <BottomTabs navigation={props.navigation}></BottomTabs>
+      <BottomTabs navigation={navigation.navigation}></BottomTabs>
     </SafeAreaView>
   );
 }

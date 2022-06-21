@@ -17,8 +17,9 @@ const tripLikeIcon = {
 };
 
 const Post = ({ post }) => {
+  console.log(post)
   return (
-    <TouchableOpacity style={{ marginBottom: 5 }} onPress={()=> post.props.navigation.navigate("TripDetails")}>
+    <TouchableOpacity style={{ marginBottom: 5 }} onPress={()=> post.navigation.navigate("TripDetails")}>
       <PostHeader post={post} />
       <View style={{ marginLeft: 320, marginTop: -30, alignSelf: "center" }}>
         <PostLike id={post.id} liked={post.liked} />
@@ -94,13 +95,13 @@ const Icon = ({ imgStyle, id, liked }) => {
   const [likeIcon, SetLikeIcon] = useState(imageUrl);
   let [savedRoom, setSavedRoom] = useState("");
   useEffect(() => {
-    console.log('useEffect called');
+    //console.log('useEffect called');
     SetLikeIcon(liked ? imageLikedUrl : imageUrl);
   },[]);
   const myDoc = doc(db, "User", userUid);
 
   function Create() {
-  console.log(id)
+  //console.log(id)
 
     if (likeIcon == imageUrl) {
       SetLikeIcon(imageLikedUrl);

@@ -93,7 +93,6 @@ const Select = (props: Props) => {
                 isDisabled={props.isDisabled}
                 caretIcon={props.caretIcon}
                 clearIcon={props.clearIcon}
-                
             />
             { spacing && <View style={styles.spacer} /> }
             <View onLayout={getDropdownPos} />

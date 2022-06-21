@@ -7,19 +7,21 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { app, db } from "../Config"
 import {
   doc,
   setDoc,
 } from "firebase/firestore";
+import Slider from "@react-native-community/slider";
 
 export default function AboutMe(props) {
-  const userUid = app.auth().currentUser.uid; //will change when registration is complete
+  const userUid = app.auth().currentUser.uid; 
   let [bio, setBio] = useState("");
   let [preference, setPreference] = useState("");
   let [error, setError] = useState("");
+  const [preferredAge, setPreferredAge] = useState("15");
 
   function Validate() {
     if (bio == "" || preference == "") {
@@ -29,34 +31,35 @@ export default function AboutMe(props) {
       setError("Bio lenght must be over 15 characters.");
     }
     else {
-      Create();
-      props.navigation.navigate("ProfilePicUpload");
+      Update();
+      props.navigation.navigate("ProfilePicUpload", {props});
     }
   }
 
-  function Create() {
+  function Update() {
     const myDoc = doc(db, "User", userUid);
 
     let docData = {
-      name: {preference},
-      bio: {bio},
+      preference: preference,
+      bio: bio,
+      preferredAge: preferredAge
     };
 
-    setDoc(myDoc, docData)
-      //handling promises
+    setDoc(myDoc, docData, { merge: true })
       .then(() => {
-        alert("Profile created");
+        console.log("Profile Updated!");
       })
       .catch((error) => {
-        alert(error.message);
+        console.log(error.message);
       });
-  }
+  };
 
   return(
-      <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => props.navigation.navigate('Register')}>
-            <Image source={require("../assets/arrow.png")}/>
+            <Image style={{width: 30, height: 30}} source={require("../assets/arrow.png")}/>
           </TouchableOpacity>
           <Text style={styles.caption}>About Me</Text>
         </View>
@@ -76,38 +79,52 @@ export default function AboutMe(props) {
           <Text style={styles.gender}>Gender</Text>
           <View style={styles.section}>
             <TouchableOpacity
-              style={styles.button} 
+              style={preference === "male" ? styles.selected : styles.button}
               onPress={(preference) => setPreference("male")}
             >
               <Image style={styles.icon} source={require("../assets/male_icon.png")}/>
               <Text style={styles.btnText}>Male</Text>
             </TouchableOpacity>
             <TouchableOpacity 
-              style={styles.button} 
+              style={preference === "female" ? styles.selected : styles.button}
               onPress={(preference) => setPreference("female")}
             >
               <Image style={styles.icon} source={require("../assets/female_icon.png")}/>
               <Text style={styles.btnText}>Female</Text>
             </TouchableOpacity>
             <TouchableOpacity 
-              style={styles.button}
+              style={preference === "Not specified" ? styles.selected : styles.button}
               onPress={(preference) => setPreference("Not specified")}
             >
               <Text style={styles.btnText}>Not specified</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.errorMsg}>{error}</Text>
+          <Text style={styles.sliderTxt}>Age: {preferredAge}</Text>
+          <Text style={{ fontSize: 12, marginLeft: 260 }}>15 - 60+</Text>
+          <Slider
+            style={styles.slider}
+            minimumValue={15}
+            maximumValue={60}
+            minimumTrackTintColor="#bd2aba"
+            maximumTrackTintColor="darkgray"
+            thumbTintColor="#b61fb5"
+            value={1}
+            onValueChange={(value) => setPreferredAge(parseInt(value))}
+          />
           <TouchableOpacity 
             style={styles.submit} 
             onPress={() => {
               Validate();
-            }}>
-            <Text style={styles.submitText}>Continue</Text>
+          }}>
+          <Text style={styles.submitText}>Continue</Text>
           </TouchableOpacity>
+          <Text style={styles.errMsg}>{error}</Text>
         </View> 
-      </SafeAreaView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -123,12 +140,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginLeft: 30,
     marginRight: 30,
+    marginTop: 30,
     alignItems: "center",
   },
   caption: {
     fontWeight: "bold",
     color: "#8736AA",
-    fontSize: 20,
+    fontSize: 22,
     marginLeft: 100,
   },
   input: {
@@ -136,9 +154,11 @@ const styles = StyleSheet.create({
     width: 330,
     height: 190,
     borderRadius: 22,
+    marginTop: 10,
   },
   bio: {
     marginBottom: 20,
+    marginTop: 30,
     fontSize: 17,
   },
   preference: {
@@ -146,7 +166,7 @@ const styles = StyleSheet.create({
     color: "#8736AA",
     marginTop: 50,
     marginBottom: 40,
-    fontSize: 20,
+    fontSize: 22,
   },
   gender: {
     alignSelf: "flex-start",
@@ -158,6 +178,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+  },
+  selected: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 105,
+    height: 30,
+    margin: 5,
+    borderRadius: 15,
+    backgroundColor: "#bd2aba",
   },
   button: {
     flexDirection: "row",
@@ -177,6 +207,18 @@ const styles = StyleSheet.create({
   btnText: {
     fontSize: 15,
   },
+  slider: {
+    width: 350, 
+    height: 30, 
+    alignSelf: 'center',
+    marginBottom: 0,
+  },
+  sliderTxt: {
+    fontSize: 12, 
+    marginTop: 30,
+    marginLeft: 5,
+    alignSelf: "flex-start",
+  },
   submit: {
     justifyContent: "center",
     alignItems: "center",
@@ -184,17 +226,16 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     width: "100%",
     height: 40,
-    marginTop: 20,
+    marginTop: 60,
   },
   submitText: {
    color: "white",
    fontSize: 20,
   },
-  errorMsg: {
+  errMsg: {
     color: "red",
-    fontWeight: "bold",
-    marginTop: 100, // will change when range is added
-  },
+    marginTop: 10,
+  }
 });
 
 

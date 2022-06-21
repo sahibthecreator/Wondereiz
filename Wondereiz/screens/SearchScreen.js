@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
-import {View,Text,StyleSheet,SafeAreaView,Image, TouchableOpacity, FlatList} from 'react-native';
+import React, { Component, useEffect, useState } from "react";
+import {
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  View,
+  Button,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { app, db } from "../Config";
 import BottomTabs from "../components/BottomTabs";
-import SearchBox from "../components/SearchBox";
-import PropTypes from 'prop-types';
-import { TextInput } from 'react-native-gesture-handler';
-import firebase from 'firebase/compat';
 import {
   collection,
   query,
@@ -13,210 +18,166 @@ import {
   doc,
   getDoc,
 } from "firebase/firestore";
-require('firebase/firestore');
+import Post from "../components/Post";
+import { ScrollView, TextInput } from "react-native-gesture-handler";
+import Loading from "../components/Loading";
 
 export default function SearchPage(props) {
-        const [Room, setRoom] = useState([])
+  const userUid = app.auth().currentUser.uid;
 
-        const fetchRoom = (search) => {
-          firebase.firestore()
-          .collection('Room')
-          where('name', '=>', search)
-          .get()
-          .then((snapshot) => {
-            let users = snapshot.docs.map(doc => {
-                const data = doc.data();
-                const id = doc.id;
-                return {id, ...data }
-            });
-            setRoom(Room);
-          })
-        }
-        // const SearchScreen = (props) => {
-        // const [searchQuery, setSearchQuery] = React.useState('');
-        // const onChangeSearch = query => setSearchQuery(query);
-      
+  let [rooms, setRooms] = useState([]);
+  let [resultRooms, setResultRooms] = useState([]);
+  let q;
+
+  useEffect(() => {
+    setRooms("");
+    q = query(collection(db, "Room"));
+    onSnapshot(q, (snapshot) => {
+      let tempRooms = [];
+      snapshot.docs.forEach((doc) => {
+        tempRooms.push(doc.data());
+      });
+      setRooms(tempRooms);
+      setResultRooms(
+        rooms.filter((room) => {
+          console.log(resultRooms);
+          return (
+            room.cityTo.includes("Amsterdam") ||
+            room.cityFrom.includes("Amsterdam")
+          );
+        })
+      );
+      //console.log(rooms);
+    });
+  }, []);
+
+  function getResultRooms(query){
+    setResultRooms(
+      rooms.filter((room) => {
+        console.log(props);
         return (
-          <SafeAreaView style={styles.container}>
-            {/* <Searchbar
-            placeholder="Search"
-            onChangeText={onChangeSearch}
-            value={searchQuery}
-          /> */}
-            <View style={styles.header}>
-              <View style={styles.searchBar}> 
-                <SearchBox navigation={props.navigation} onChangeText={(search)=> fetchRoom(search)}/>
-                {/* <TextInput onChangeText={(search)=> fetchRoom(search)} placeholder="Search Here"/> */}
-                <FlatList 
-                    numColumns={1}
-                    horizonta={false}
-                    data={Room}
-                    renderItem={({item}) =>
-                    <Text>{item.cityFrom}</Text>
-                  }
-                />
-                <TouchableOpacity onPress={() => props.navigation.navigate("Filters") }>
-                     <Image source={require('../assets/filter.png')}  style={styles.FilterIcon} />
-                </TouchableOpacity>
-              </View>  
-            </View>
-            <View style={styles.main}>
-              <View style={styles.recommandation}>
-                <View style={styles.tripPhoto}>
-                  <Image
-                      source={{
-                        uri: "https://media.cntraveller.com/photos/611be7c7a106ea5ed3099f8c/4:3/w_2664,h_1998,c_limit/amsterdam-mag-jan19-matthew-buck23.jpg",
-                      }}
-                      style={styles.groupImg}
-                  />
-                </View>
-                <View style={styles.tripDetails}>
-                  <Text style={styles.tripName}> Eindhoven - Amsterdam</Text>
-                  <Text style={styles.tripDate}> 15 June 2022</Text>
-                </View>
-                <View style={styles.options}>
-                   <TouchableOpacity onPress={() => props.navigation.navigate("") }>
-                    <Image source={require('../assets/heart.png')}  style={styles.favourite} />
-                    </TouchableOpacity>
-                  <Text style={styles.members}> 2/6 </Text>
-                </View>
-              </View>
-              <View style={styles.recommandation}>
-                <View style={styles.tripPhoto}>
-                <Image
-                      source={{
-                        uri: "https://media.cntraveller.com/photos/611be7c7a106ea5ed3099f8c/4:3/w_2664,h_1998,c_limit/amsterdam-mag-jan19-matthew-buck23.jpg",
-                      }}
-                      style={styles.groupImg}
-                  />
-                </View>
-                <View style={styles.tripDetails}>
-                  <Text style={styles.tripName}> Emmen - Amsterdam</Text>
-                  <Text style={styles.tripDate}> 15 June 2022</Text>
-                </View>
-                <View style={styles.options}>
-                  <Image source={require('../assets/heart.png')}  style={styles.favourite} />
-                  <Text style={styles.members}> 2/6 </Text>
-                </View>
-              </View>
-              <View style={styles.recommandation}>
-                <View style={styles.tripPhoto}>
-                <Image
-                      source={{
-                        uri: "https://media.cntraveller.com/photos/611be7c7a106ea5ed3099f8c/4:3/w_2664,h_1998,c_limit/amsterdam-mag-jan19-matthew-buck23.jpg",
-                      }}
-                      style={styles.groupImg}
-                  />
-                </View>
-                <View style={styles.tripDetails}>
-                  <Text style={styles.tripName}> Groningen - Amsterdam</Text>
-                  <Text style={styles.tripDate}> 15 June 2022</Text>
-                </View>
-                <View style={styles.options}>
-                  <Image source={require('../assets/heart.png')}  style={styles.favourite} />
-                  <Text style={styles.members}> 2/6 </Text>
-                </View>
-              </View>
-            </View>
-            <View style={styles.footer}>
-                <BottomTabs navigation={props.navigation} />
-            </View>
-          </SafeAreaView>
-        )
-    //   };
+          room.cityTo.includes(query) && 
+          props.route.params.day? room.travelDate.includes(props.route.params.day): false &&
+            props.route.params.month? room.travelDate.includes(props.route.params.month): false &&
+            props.route.params.year? room.travelDate.includes(props.route.params.year): false
+            //props.route.params.cityFrom? room.cityFrom.includes(props.route.params.cityFrom): false &&
+            //props.route.params.cityTo? room.cityTo.includes(props.route.params.cityTo): false
+           ||
+          room.cityFrom.includes(query)
+        );
+      })
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.searchbar}>
+          <Image
+            source={{
+              uri: "https://img.icons8.com/ios/100/undefined/search--v1.png",
+            }}
+            style={styles.searchbarImg}
+          />
+          <TextInput
+            placeholder="E-mail or Username"
+            onChangeText={(value) => {
+              if (value && value.length > 0) {
+                value = value.trim();
+                getResultRooms(value);
+              } else {
+                setResultRooms([]);
+              }
+            }}
+            style={styles.input}
+            placeholderTextColor={"gray"}
+          />
+        </View>
+        <TouchableOpacity
+          onPress={() => props.navigation.navigate("Filters")}
+          style={styles.filterBtn}
+        >
+          <Image
+            source={require("../assets/filter.png")}
+            style={styles.filterImg}
+          />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView>
+        {resultRooms.length ? (
+          resultRooms.map((data, idx) => (
+            <Post
+              post={{
+                id: resultRooms[idx].id,
+                trip_picture: resultRooms[idx].mainPicture,
+                trip:
+                  resultRooms[idx].cityFrom + " - " + resultRooms[idx].cityTo,
+                caption: resultRooms[idx].travelDate,
+                props: props,
+              }}
+            />
+          ))
+        ) : (
+          <Image
+            style={{
+              width: 200,
+              height: 200,
+              alignSelf: "center",
+              marginTop: "30%",
+            }}
+            source={require("../assets/notFound.png")}
+          />
+        )}
+      </ScrollView>
+      <BottomTabs navigation={props.navigation} />
+    </SafeAreaView>
+  );
 }
-//styling for the page
+
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: "center",
-      //justifyContent: "space-around",
-      justifyContent: 'center',
-      backgroundColor: "white",
-    },
-    header: {
-      marginTop: 50,
-      marginLeft: 20,
-      marginRight: 30,
-      // justifyContent: "space-around",
-      
-      marginBottom: 20,
-      // height: '30%',
-    //   flex: 1,
-    //   flexDirection: 
-      
-    },
-    searchBar: {
-      alignItems: "center",
-      // backgroundColor: '#e4e6eb',
-      height: 30,
-      // width: 300,
-      borderRadius: 20,
-      flexDirection: 'row',
-    },
-    
-    FilterIcon: {
-        width: 30,
-      height: 30,
-      marginLeft: 10,
-    },
-    main: {
-      //  height: '50%',
-       flex:1,
-      //  height: '80%',
-  
-    },
-    recommandation: {
-      backgroundColor: '#e4e6eb',
-      // height: 200,
-      width: 350,
-      marginTop: 20,
-      marginRight: 16,
-      marginRight: 16,
-      borderRadius: 16,
-      flexDirection: 'row',
-    },
-    groupImg: {
-      marginLeft: 10,
-      // marginTop: 20,
-      width: 60,
-      height: 60,
-      borderRadius: 30
-    },
-    tripDetails:{
-      marginTop: 5,
-      marginLeft: 10,
-      width: 200,
-    },
-    tripName: {
-      fontSize: 15,
-      fontWeight: "500",
-      color: "#b61fb5",
-    },
-    tripDate: {
-      marginTop: 5,
-      fontSize: 12,
-      fontWeight: "500",
-      color: "grey",
-    },
-    options: {
-      marginLeft: 20,
-      marginRight: 40,
-  
-  
-    },
-    favourite: {
-      marginTop: 7,
-  
-    },
-    members: {
-      fontSize: 11,
-      fontWeight: "500",
-      color: "grey",
-      marginTop: 2,
-    },
-    footer: {
-      width: '100%',
-      height: '10%',
-    },
-  });
+  container: {
+    backgroundColor: "white",
+    flex: 1,
+  },
+  header: {
+    width: "100%",
+    height: 40,
+    paddingHorizontal: 5,
+    flexDirection: "row",
+    alignItems: "center",
+    margin: 10,
+    marginBottom: 20,
+  },
+  searchbar: {
+    width: "80%",
+    color: "gray",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#dadada",
+    height: 40,
+    borderRadius: 30,
+    paddingRight: 15,
+  },
+  searchbarImg: {
+    padding: 10,
+    margin: 10,
+    marginRight: 15,
+    height: 25,
+    width: 25,
+    resizeMode: "stretch",
+    alignItems: "center",
+  },
+  input: {
+    flex: 1,
+    backgroundColor: "#dadada",
+    borderRadius: 30,
+  },
+  filterImg: {
+    alignSelf: "flex-end",
+  },
+  filterBtn: {
+    alignSelf: "center",
+    width: "13%",
+  },
+});

@@ -1,135 +1,189 @@
-import React from 'react';
-import {View,Text,StyleSheet,SafeAreaView,Image} from 'react-native';
+import React, { Component, useEffect, useState } from "react";
+import {
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  View,
+  Button,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { app, db } from "../Config";
 import BottomTabs from "../components/BottomTabs";
-import PropTypes from 'prop-types';
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  getDoc,
+  limit,
+} from "firebase/firestore";
+import { ScrollView } from "react-native-gesture-handler";
+import Loading from "../components/Loading";
 
 export default function NotificationsPage(props) {
-    return (
-        <SafeAreaView style={styles.container}>
-          {/* header section */}
-          <View style={styles.header}>
-              <Text style={styles.caption}>Messages</Text>
-          </View>
-          {/* main section for showing Notification */}
-          <View style={styles.main}>
-                <View style={styles.mainPic}>
-                  <Image
-                    source={{
-                      uri: "https://media.cntraveller.com/photos/611be7c7a106ea5ed3099f8c/4:3/w_2664,h_1998,c_limit/amsterdam-mag-jan19-matthew-buck23.jpg",
-                    }}
-                    style={styles.groupImg}
-                  />
-                </View>
-                <View style={styles.mainText}>
-                    <Text style={styles.msgTitle}>
-                      Eindhoven - Amsterdam
-                    </Text>
-                    <Text style={styles.msgDate}>
-                      15 June 2022
-                    </Text>
-                    <Text style={styles.msgText}>
-                      Violetta: Hi everyone
-                    </Text>
-                </View>
-                <View style={styles.mainTime}>
-                  <Text style={styles.msgTime}>
-                    11:30
-                  </Text>
-                  <Text style={styles.unreadMsg}>
-                    2
-                  </Text>
-    
-                </View>
-          </View>
-          <View style={styles.footer}>
-          <BottomTabs navigation={props.navigation} />
-          </View>
-          
-        </SafeAreaView>
-      )
-};
+  const userUid = app.auth().currentUser.uid;
 
-// export default NotificationsPage;
+  let [notifications, setNcotifications] = useState([]);
+  let [result, setResult] = useState([]);
 
-//styling for the page
+  let q;
+
+  const getRoomIds = () => {};
+
+  useEffect(() => {
+    let roomIds = ["room6"];
+    let rooms = [];
+    let messages = [];
+    let results = [];
+
+    const myUser = doc(db, "User", userUid);
+
+    getDoc(myUser).then((snapshot) => {
+      roomIds = snapshot.data().newMessages;
+
+      Promise.all(roomIds).then((roomIds) => {
+        let q = query(collection(db, "Room"), where("id", "in", roomIds));
+        onSnapshot(q, (snapshot) => {
+          if (snapshot) {
+            snapshot.docs.forEach((room) => {
+              rooms.push(room.data());
+            });
+            Promise.all(rooms).then((rooms) => {
+              rooms.forEach((room) => {
+                q = query(
+                  collection(db, "Messages"),
+                  where("roomId", "==", room.id)
+                );
+                onSnapshot(q, (snapshot) => {
+                  if (snapshot) {
+                    messages.push({
+                      ...room,
+                      text: snapshot.docs[0].data().text,
+                      senderUid: snapshot.docs[0].data().uid,
+                    });
+                    Promise.all(messages).then((messages) => {
+                      const sender = doc(
+                        db,
+                        "User",
+                        messages[messages.length - 1].senderUid
+                      );
+                      getDoc(sender).then((snapshot) => {
+                        if (snapshot.exists) {
+                          results.push({
+                            ...messages[messages.length - 1],
+                            sendersName: snapshot.data().firstName,
+                          });
+                          Promise.all(results).then((results) => {
+                            setResult(results);
+                            console.log(result);
+                          });
+                        }
+                      });
+                    });
+                  }
+                });
+              });
+            });
+          }
+        });
+      });
+    });
+  }, []);
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.pageNameTxt}>Messages</Text>
+
+      <ScrollView>
+        {result.length !== 0 ? (
+          result.map((data, idx) => (
+            <TouchableOpacity
+              style={styles.messageBox}
+              onPress={() => props.navigation.navigate("ChatScreen", {room: result[idx]})} 
+            >
+              <Image
+                style={styles.messageImg}
+                source={{ uri: result[idx].mainPicture }}
+              />
+              <View style={styles.txtContainer}>
+                <Text style={styles.tripTxt}>
+                  {result[idx].cityFrom} - {result[idx].cityTo}
+                </Text>
+                <Text style={styles.captionTxt}>{result[idx].travelDate}</Text>
+                <Text style={styles.messageTxt}>
+                  {result[idx].sendersName}: {result[idx].text}
+                </Text>
+              </View>
+              <Text style={styles.timeTxt}>{result[idx].createdAtTime}</Text>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Loading />
+        )}
+      </ScrollView>
+      <BottomTabs navigation={props.navigation} />
+    </SafeAreaView>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: "center",
-    // justifyContent: "space-around",
-    //justifyContent: 'center',
     backgroundColor: "white",
+    flex: 1,
   },
-  header: {
-    alignItems: "center",
-    marginTop: 50,
-    marginLeft: 30,
-    marginRight: 30,
-    marginBottom: 20,
-  },
-  caption: {
+  pageNameTxt: {
     fontSize: 25,
     fontWeight: "500",
     color: "#b61fb5",
+    padding: 40,
+    alignSelf: "center",
   },
-  main: {
-    flex: 1,
-    flexDirection:'row',
-    marginLeft: 30,
-    marginTop: 20,
+  trip: {
+    marginLeft: 15,
+    width: 70,
+    height: 70,
+    borderRadius: 50,
   },
-  groupImg: {
-    marginLeft: 1,
-    // marginTop: 20,
-    width: 60,
-    height: 60,
-    borderRadius: 30
+  messageBox: {
+    width: "100%",
+    height: 80,
+    paddingHorizontal: 15,
+    alignContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
   },
-  
-  mainPic: {
-    marginLeft: 30,
-
+  messageImg: {
+    height: 70,
+    width: 70,
+    resizeMode: "stretch",
+    borderRadius: 100,
   },
-  mainText: {
-    width: '60%',
-    marginTop:2,
+  txtContainer: {
+    height: "80%",
     marginLeft: 20,
-    
   },
-  msgTitle: {
-    fontSize: 15,
+  tripTxt: {
+    color: "#8736AA",
+    fontWeight: "bold",
+  },
+  captionTxt: {
+    color: "#BFBFBF",
     fontWeight: "500",
-    color: "#b61fb5",
   },
-  msgDate: {
-    // width: '20%',
-    fontSize: 10,
+  timeTxt: {
+    color: "#BFBFBF",
     fontWeight: "500",
-    color: '#D5D1DA',
+    height: "80%",
+    position: "absolute",
+    right: 0,
+    marginRight: 20,
   },
-  msgText: {
-    fontSize: 12,
+  messageTxt: {
+    color: "black",
     fontWeight: "500",
-    color: '#54617F',
+    marginTop: 5,
   },
-  mainTime: {
-    width:'20%',
-    fontSize: 12,
-    fontWeight: "500",
-    color: '#D5D1DA',
-  },
-  msgTime: {
-    marginTop: 10,
-    fontSize: 12,
-    fontWeight: "500",
-    color: '#54617F',
-  },
-  unreadMsg: {
-      marginTop:10,
-  },
-  footer: {
-    width: '100%',
-    height: 30,
-  }
-
 });
