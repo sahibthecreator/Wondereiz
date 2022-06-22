@@ -20,6 +20,7 @@ export default function ProfilePicUpload(props) {
   let [procentage, setProcentage] = useState("");
 
   const imageRef = ref(storage, `profilePictures/${userUid}.jpg`);
+  const fileName = `${userUid}.jpg`;
     
   let pickImage = async () => {
     let permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -50,7 +51,6 @@ export default function ProfilePicUpload(props) {
     (snapshot) => {
       let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
       setProcentage('Upload is ' + progress + '% done');
-      console.log('Upload is ' + progress + '% done');
     },
     (error) => {
       console.log(error);
@@ -58,28 +58,22 @@ export default function ProfilePicUpload(props) {
       return;
     },
     () => {
-      console.log("Uploaded!");
       getDownloadURL(imageRef)
       .then((url) => {
         setUri(url);
-        console.log(url);
-        updateImage();
+        CreateImageRef();   
       }); 
     });
   }
 
-  function updateImage() {
-    console.log("Creating reference database..");
-    const myDoc = doc(db, "User", userUid);
-
+ 
+  function CreateImageRef() {
+    const myDoc = doc(db, "User", userUid);  
     let docData = {
-      profilePicture: uri
+      profilePicture: fileName
     };
 
     setDoc(myDoc, docData, { merge: true })
-      .then(() => {
-        console.log("Refrence updated!");
-      })
       .catch((error) => {
         console.log(error);
         setError("Something went wrong, please try again");
@@ -87,6 +81,7 @@ export default function ProfilePicUpload(props) {
       }
     );
   }
+
 
   return (
     <SafeAreaView style={styles.container}>
