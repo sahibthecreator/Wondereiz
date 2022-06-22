@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,125 +8,92 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { app, db, storage } from "../Config";
-import {
-  doc,
-  setDoc,
-} from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import * as ImagePicker from "expo-image-picker";
-import { ImagePickerCancelledResult } from 'expo-image-picker';
-import { ref, uploadBytes, getDownloadURL, deleteObject, deleteMetadata, uploadBytesResumable } from "firebase/storage";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { ScrollView } from "react-native-gesture-handler";
 
 
 export default function ProfilePicUpload(props) {
   let userUid = app.auth().currentUser.uid;
-  let [image, setImage] = useState(null);
-  let [result, setResult] = useState("");
-  let [blob, setBlob] = useState("");
   let [error, setError] = useState("");
   let [procentage, setProcentage] = useState("");
-  let uri;
 
-  const pickImage = async () => {
-    try {
-      setResult(await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      }));
+  const imageRef = ref(storage, `profilePictures/${userUid}.jpg`);
+    
+  let pickImage = async () => {
+    let permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-      console.log(result);
-
-      if (!result.cancelled) {
-          const getUri = await fetch(result.uri);
-          setBlob(await getUri.blob());
-          setError("");
-          setProcentage("");
-          uploadImage();   
-      } else {
-        return;
-      }
-    } catch (error) {
-      setError("Something went wrong, please try again");
-      console.info(error);
+    if (permission.granted === false) {
+      alert("Permission to access the camera roll is required!");
       return;
     }
+
+    let result = await ImagePicker.launchImageLibraryAsync();
+
+    if (result.cancelled === true) {
+      return;
+    }
+
+    setError("");
+    setProcentage("");
+    const img = await fetch(result.uri);
+    const blob = await img.blob();
+    UploadImage(blob);
   };
 
-    function uploadImage() {
-      /*if (image !== null) {
-        const deleteRef = ref(storage, `profilePictures/${userUid}`);
-      deleteObject(deleteRef)
+  const [uri, setUri] = useState(null);
+
+  function UploadImage(file) {
+    const uploadTask = uploadBytesResumable(imageRef, file)
+    uploadTask.on('state_changed',
+    (snapshot) => {
+      let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      setProcentage('Upload is ' + progress + '% done');
+      console.log('Upload is ' + progress + '% done');
+    },
+    (error) => {
+      console.log(error);
+      setError("Something went wrong, please try again");
+      return;
+    },
+    () => {
+      console.log("Uploaded!");
+      getDownloadURL(imageRef)
+      .then((url) => {
+        setUri(url);
+        console.log(url);
+        updateImage();
+      }); 
+    });
+  }
+
+  function updateImage() {
+    console.log("Creating reference database..");
+    const myDoc = doc(db, "User", userUid);
+
+    let docData = {
+      profilePicture: uri
+    };
+
+    setDoc(myDoc, docData, { merge: true })
       .then(() => {
-        console.log("Deleted previous file!");
-      }).catch((error) => {
+        console.log("Refrence updated!");
+      })
+      .catch((error) => {
+        console.log(error);
         setError("Something went wrong, please try again");
-        console.log(error.message);
-      });
+        return;
       }
-       */
-      
-      const fileExtension = result.uri.split('.').pop();
-      console.log("EXT: " + fileExtension);
-
-      const fileName = `${userUid}.${fileExtension}`;
-      console.log(fileName);
-      
-      const metadata = {
-        type: "image/jpeg"
-      }
-
-      const imageRef = ref(storage, `profilePictures/${fileName}`);
-      const uploadTask = (uploadBytesResumable(imageRef, blob, metadata));
-        uploadTask.on('state_changed',
-          (snapshot) => {
-            let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setProcentage('Upload is ' + progress + '% done');
-          }, 
-          (error) => {
-            console.log(error);
-            return;
-          },  
-          () => {
-            console.log("Uploaded to storage!");
-            getDownloadURL(uploadTask.snapshot.ref)
-              .then((url) => {
-                setImage(url);
-                console.log(image);
-                updateImage();
-              }) 
-              .catch((error) => {
-                console.log(error);
-              });
-          }
-        );  
-    } 
-
-    function updateImage() {
-      console.log("Creating reference database");
-      const myDoc = doc(db, "User", userUid);
-
-      let docData = {
-        profilePicture: image
-      };
-
-      setDoc(myDoc, docData, { merge: true })
-        .then(() => {
-          console.log("Refrence updated!");
-        })
-        .catch((error) => {
-          console.log(error);
-        }
-      );
-    }
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <ScrollView>
           <View style={{flexDirection: "row"}}>
-            <TouchableOpacity onPress={() => props.navigation.navigate('AboutMe')}>
+            <TouchableOpacity onPress={() => props.navigation.goBack()}>
               <Image style={{width: 30, height: 30}} source={require("../assets/arrow.png")}/>
             </TouchableOpacity>
             <Text style={styles.caption}>Profile Picture</Text>
@@ -136,17 +103,17 @@ export default function ProfilePicUpload(props) {
               style={{marginTop: 250}} 
               onPress={pickImage}
             > 
-              {(image !== null) && <Image style={styles.icon} source={{ uri: image }}/>}
-              {(image === null) && <Image style={styles.icon} source={require("../assets/profilePic.png")} />}
+              {(uri !== null) && <Image style={styles.icon} source={{ uri: uri }} />}
+              {(uri === null) && <Image style={styles.icon} source={require("../assets/profilePic.png")} />}
               <Image style={styles.camera} source={require("../assets/camera.png")}/>
             </TouchableOpacity>
             <Text style={styles.pictureTxt}>Upload a picture of yourself!</Text>
             <Text style={{color: "red", marginTop: 10}}>{error}</Text>
-            {(image !== null) && <Text>{procentage}</Text>}
+            {(uri !== null) && <Text>{procentage}</Text>}
           </View>
           <TouchableOpacity 
             style={styles.submit}
-            onPress={() => {(image === null) ? setError("Please select an image!") : props.navigation.navigate('Home')}}
+            onPress={() => {(uri === null) ? setError("Please select an image!") : props.navigation.navigate('Home')}}
           >
             <Text style={styles.submitText}>Continue</Text>
           </TouchableOpacity>
@@ -173,7 +140,7 @@ const styles = StyleSheet.create({
     marginLeft: 80,
   },
   icon: {
-    borderRadius: 75,
+    borderRadius: 90,
     width: 180,
     height: 180,
   },
@@ -181,8 +148,8 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     position: "absolute",
-    top: 105,
-    left: 110,
+    top: 120,
+    left: 115,
   },
   pictureTxt: {
     color: "grey",

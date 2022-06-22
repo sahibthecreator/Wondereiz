@@ -19,6 +19,7 @@ import NotificationsPage from "./screens/NotificationsScreen";
 import ProfileScreen from './screens/ProfileScreen';
 import SearchPage from "./screens/SearchScreen";
 import Chat from "./screens/ChatScreen";
+import CreateTrip from "./screens/CreateTripScreen";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -43,7 +44,7 @@ const AppNavigator = () => (
             <Screen name="Profile" component={ProfileScreen} />
             <Screen name="SearchPage" component={SearchPage} />
             <Screen name="ChatScreen" component={Chat} />
-
+            <Screen name="CreateTrip" component={CreateTrip} />
         </Navigator>
     </NavigationContainer>
 )
