@@ -22,11 +22,7 @@ import {
 } from "firebase/firestore";
 import { ScrollView } from "react-native-gesture-handler";
 import Loading from "../components/Loading";
-import {
-  useCollection,
-  useCollectionOnce,
-} from "react-firebase-hooks/firestore";
-import DateTimePicker from "@react-native-community/datetimepicker";
+
 
 export default function NotificationsPage(props) {
   const userUid = app.auth().currentUser.uid;

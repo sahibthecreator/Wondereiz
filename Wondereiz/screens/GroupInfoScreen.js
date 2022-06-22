@@ -1,39 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, SafeAreaView, StyleSheet, Image } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity } from "react-native";
 import {
   collection,
   query,
 } from "firebase/firestore";
 import { ScrollView } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { db } from "../Config";
+//import { TouchableOpacity } from "react-native-gesture-handler";
+import { db, app } from "../Config";
 import "firebase/compat/firestore";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import PartecipantBox from "../components/PartecipantBox"
 import Loading from "../components/Loading";
+import DisplayPartecipantBox from "../components/PartecipantBox";
 
 
 export default function GroupInfoScreen(props) {
   //let [partecipant, setPartecipant] = useState([]);
   let [partecipant_picture, setPartecipantPicture] = useState([]);
 
-  const ref = collection(db, "User",
-  );
+  const userUid = app.auth().currentUser.uid;
+
+  const ref = collection(db, "User", userUid);
+
   //console.log(props.route.params.props.route.params.room.id)
   console.log(props)
   const q = query(ref);
 
   const [partecipants] = useCollectionData(query(ref));
 
-
-  /*onSnapshot(q, (snapshot) => {
-    let partecipants = [];
-    snapshot.docs.forEach((doc) => {
-      partecipants.push(doc.data()); //Adding one by one
-    });
-    setPartecipant(partecipants);
-    console.log(partecipant);
-  });*/
 
   function DisplayPartecipants(props) {
     const { username, profilePicture } = props.partecipant;
@@ -99,25 +93,24 @@ export default function GroupInfoScreen(props) {
 
         <View style={styles.partecipants}>
           {partecipants ?
+
             <View>
+              <TouchableOpacity onPress={() => props.navigation.navigate("Profile", { props })}>
+                <Image
+                  source={{
+                    uri: "https://img.icons8.com/ios-glyphs/30/D50FBC/back.png",
+                  }}
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
               {partecipants && partecipants.map((prt, prtIndex) => (<DisplayPartecipants key={prtIndex} partecipant={prt} />))}
             </View>
             : (
               <Loading />
             )}
-          <View>
-            <TouchableOpacity onPress={() => console.log("fffff")}>
-              <Image
-                source={{
-                  uri: "https://img.icons8.com/ios-glyphs/30/D50FBC/back.png",
-                }}
-                style={styles.iconPartecipant}
-              />
-            </TouchableOpacity>
-          </View>
         </View>
-
-
+        <View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -169,6 +162,5 @@ const styles = StyleSheet.create({
     elevation: 5,
     position: "relative"
   },
-  iconPartecipant: {
-  }
+
 });
