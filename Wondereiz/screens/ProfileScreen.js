@@ -95,12 +95,11 @@ export default function Profile(props) {
                 </> 
               : 
                 <>                              
-                  <TouchableOpacity onPress={() => props.navigation.navigate("TripDetails")}>    
+                  <TouchableOpacity onPress={() => props.navigation.goBack()}>    
                     <Image style={styles.backIcon} source={require("../assets/arrow.png")} />
                   </TouchableOpacity> 
                   <Text style={styles.captionPartp}>Participant Info</Text>
-                </>
-                
+                </>     
             }
           </View>
           <TouchableOpacity>      

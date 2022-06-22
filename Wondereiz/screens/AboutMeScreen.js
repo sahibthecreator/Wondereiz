@@ -58,7 +58,7 @@ export default function AboutMe(props) {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => props.navigation.navigate('Register')}>
+          <TouchableOpacity onPress={() => props.navigation.goBack()}>
             <Image style={{width: 30, height: 30}} source={require("../assets/arrow.png")}/>
           </TouchableOpacity>
           <Text style={styles.caption}>About Me</Text>
