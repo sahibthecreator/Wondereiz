@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity } from "react-native";
 import {
+  where,
   collection,
   query,
+  onSnapshot,
 } from "firebase/firestore";
 import { ScrollView } from "react-native";
 //import { TouchableOpacity } from "react-native-gesture-handler";
@@ -17,15 +19,30 @@ import DisplayPartecipantBox from "../components/PartecipantBox";
 export default function GroupInfoScreen(props) {
   //let [partecipant, setPartecipant] = useState([]);
   let [partecipant_picture, setPartecipantPicture] = useState([]);
+  let roomId = props.route.params.roomId;
+  //let userIds = [];
 
+  let queryRoom = query(collection(db, "Room"), where("roomId", "==", roomId));
 
-  const ref = collection(db, "User");
+  /*onSnapshot(queryRoom, (snapshot) => {
+    if (snapshot) {
+      userIds.push({
+        snapshot.docs
+      })
+    }
+  });
+
+  userIds.forEach((userId, i) => {
+    console.log(userId);
+  });*/
+
+  //const ref = collection(db, "User");
 
   //console.log(props.route.params.props.route.params.room.id)
   console.log(props)
-  const q = query(ref);
+  const q = query(collection(db, "Room"), where(roomId, "array-contains", "membersUserId"));
 
-  const [partecipants] = useCollectionData(query(ref));
+  const [partecipants] = useCollectionData(query(q));
 
 
   function DisplayPartecipants(props) {
@@ -52,7 +69,7 @@ export default function GroupInfoScreen(props) {
           />
         </TouchableOpacity>
       </View>
-      <View>
+      <View style={{ flexDirection: "column" }}>
         <Image
           source={{ uri: props.route.params.props.route.params.room.mainPicture }}
           style={styles.groupImg}
@@ -61,8 +78,8 @@ export default function GroupInfoScreen(props) {
           color: "#8736AA",
           fontSize: 18,
           fontWeight: '500',
-          marginLeft: 100,
-          marginTop: 30
+          marginLeft: 120,
+          marginTop: 25
         }}>
           {props.route.params.props.route.params.room.cityFrom} - {props.route.params.props.route.params.room.cityTo}
         </Text>
@@ -70,7 +87,7 @@ export default function GroupInfoScreen(props) {
           color: "#BFBFBF",
           fontSize: 13,
           fontWeight: '500',
-          marginLeft: 155,
+          marginLeft: 145,
           marginTop: 8
         }}>
           {props.route.params.props.route.params.room.travelDate}
