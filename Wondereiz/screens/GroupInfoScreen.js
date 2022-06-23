@@ -18,9 +18,8 @@ export default function GroupInfoScreen(props) {
   //let [partecipant, setPartecipant] = useState([]);
   let [partecipant_picture, setPartecipantPicture] = useState([]);
 
-  const userUid = app.auth().currentUser.uid;
 
-  const ref = collection(db, "User", userUid);
+  const ref = collection(db, "User");
 
   //console.log(props.route.params.props.route.params.room.id)
   console.log(props)
