@@ -1,5 +1,12 @@
 import "firebase/compat/firestore";
-import { addDoc, collection, limit, orderBy, query, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  limit,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 require("firebase/auth");
 import { app } from "../Config";
 import { db } from "../Config";
@@ -32,6 +39,7 @@ export default function Chat(props) {
   const [user] = useAuthState(auth);
   const storage = getStorage(app);
   let roomId = props.route.params.room.id;
+  console.log("Room id is:" + roomId);
 
   // Create a reference to 'mountains.jpg'
   const imageRef = ref(storage, "chat/Landscape.jpg");
@@ -42,7 +50,13 @@ export default function Chat(props) {
   const [modalVisible, setModalVisible] = useState(false);
 
   const [messages, loadingMessages, error] = useCollectionData(
-    query(messagesRef, where("roomId", "==", roomId), orderBy("createdAt"), limit(100)),
+    // query(
+    //   messagesRef,
+    //   where("roomId", "==", roomId),
+    //   orderBy("createdAt"),
+    //   limit(100)
+    // ),
+    query(messagesRef, orderBy("createdAt")),
     {
       idField: "id",
     }
@@ -55,9 +69,9 @@ export default function Chat(props) {
       //e.preventDefault();
 
       let date = new Date();
-      date.setTime(date.getTime() + (2 * 60 * 60 * 1000));
+      date.setTime(date.getTime() + 2 * 60 * 60 * 1000);
       date = date.toUTCString();
-      
+
       let time = date.substring(17, 25);
 
       const { uid } = auth.currentUser;
@@ -186,18 +200,26 @@ export default function Chat(props) {
             style={{ flex: 1 }}
           />
         </TouchableOpacity>
-        <Text style={styles.headerTxt} onPress={() => props.navigation.navigate("GroupInfoScreen", { props, roomId })}>
+        <Text
+          style={styles.headerTxt}
+          onPress={() =>
+            props.navigation.navigate("GroupInfoScreen", { props, roomId })
+          }
+        >
           {props.route.params.room.cityFrom} - {props.route.params.room.cityTo}
         </Text>
-        <Image style={{ width: 50, height: 50, borderRadius: 40 }} source={{ uri: props.route.params.room.mainPicture }} />
+        <Image
+          style={{ width: 50, height: 50, borderRadius: 40 }}
+          source={{ uri: props.route.params.room.mainPicture }}
+        />
       </View>
       <KeyboardAvoidingView
         style={styles.displayedMessages}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         //COULD ONLY BE FOR ANDROID
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -290}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -270}
       >
-        <ScrollView contentContainerStyle={{ bottom: 0 }}>
+        <ScrollView contentContainerStyle={{ top: 20 }}>
           {messages &&
             messages.map((msg, msgIndex) => (
               <ChatMessage key={msgIndex} message={msg} />
