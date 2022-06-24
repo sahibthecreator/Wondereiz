@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
 
-const PartecipantBox = ({ post }) => {
+/*const PartecipantBox = ({ post }) => {
   return (
     <View style={styles.partecipantBoxContainer}>
       <PartecipantBoxHeader post={post} />
@@ -32,6 +32,14 @@ const PartecipantBoxHeader = ({ post }) => (
       >
         {post.caption}
       </Text>
+      <TouchableOpacity onPress={() => props.navigation.navigate("Profile", { props })}>
+        <Image
+          source={{
+            uri: "https://img.icons8.com/ios-glyphs/30/D50FBC/back.png",
+          }}
+          style={styles.icon}
+        />
+      </TouchableOpacity>
     </View>
   </View>
 )
@@ -61,4 +69,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default PartecipantBox
+export default PartecipantBox*/

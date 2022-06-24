@@ -24,6 +24,41 @@ export default function GroupInfoScreen(props) {
 
   let queryRoom = query(collection(db, "Room"), where("roomId", "==", roomId));
 
+  const PartecipantBox = ({ post }) => {
+    return (
+      <View style={styles.partecipantBoxContainer}>
+        <PartecipantBoxHeader post={post} />
+        <TouchableOpacity onPress={() => props.navigation.navigate("Profile", { props })}>
+          <Image
+            source={{
+              uri: "https://img.icons8.com/ios-glyphs/30/D50FBC/back.png",
+            }}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
+  const PartecipantBoxHeader = ({ post }) => (
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Image source={{ uri: post.partecipant_picture }} style={styles.partecipantBox} />
+        <Text
+          style={{
+            color: "#4B4B4B",
+            fontWeight: "500",
+            fontSize: 18,
+            marginLeft: 35,
+            marginTop: 10
+          }}
+        >
+          {post.caption}
+        </Text>
+      </View>
+    </View>
+  )
+
   /*onSnapshot(queryRoom, (snapshot) => {
     if (snapshot) {
       userIds.push({
@@ -40,9 +75,9 @@ export default function GroupInfoScreen(props) {
 
   //console.log(props.route.params.props.route.params.room.id)
   console.log(props)
-  const q = query(collection(db, "Room"), where(roomId, "array-contains", "membersUserId"));
+  const ref = collection(db, "User");
 
-  const [partecipants] = useCollectionData(query(q));
+  const [partecipants] = useCollectionData(query(ref));
 
 
   function DisplayPartecipants(props) {
@@ -65,7 +100,7 @@ export default function GroupInfoScreen(props) {
             source={{
               uri: "https://img.icons8.com/ios-glyphs/30/D50FBC/back.png",
             }}
-            style={styles.icon}
+            style={styles.backIcon}
           />
         </TouchableOpacity>
       </View>
@@ -111,14 +146,6 @@ export default function GroupInfoScreen(props) {
           {partecipants ?
 
             <View>
-              <TouchableOpacity onPress={() => props.navigation.navigate("Profile", { props })}>
-                <Image
-                  source={{
-                    uri: "https://img.icons8.com/ios-glyphs/30/D50FBC/back.png",
-                  }}
-                  style={styles.icon}
-                />
-              </TouchableOpacity>
               {partecipants && partecipants.map((prt, prtIndex) => (<DisplayPartecipants key={prtIndex} partecipant={prt} />))}
             </View>
             : (
@@ -137,7 +164,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flex: 1,
   },
-  icon: {
+  backIcon: {
     height: 30,
     width: 30,
     marginTop: 20,
@@ -178,5 +205,27 @@ const styles = StyleSheet.create({
     elevation: 5,
     position: "relative"
   },
+  partecipantBox: {
+    width: 50,
+    height: 50,
+    marginLeft: 10,
+    marginTop: 15,
+    borderRadius: 40,
+    flexDirection: "row"
+  },
+  icon: {
+    height: 30,
+    width: 30,
+    marginBottom: -50,
+    marginTop: -40,
+    marginRight: 20,
+    marginLeft: 300,
+    transform: [{ scaleX: -1 }],
+    alignItems: "center"
+  },
+  partecipantBoxContainer: {
+    marginBottom: 30,
+    alignItems: "stretch"
+  }
 
 });
