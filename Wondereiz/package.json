@@ -12,6 +12,7 @@
   "dependencies": {
     "@expo-google-fonts/roboto": "^0.2.2",
     "@ptomasroos/react-native-multi-slider": "^2.2.2",
+    "@react-native-community/datetimepicker": "6.1.2",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-community/slider": "^4.2.2",
     "@react-native-firebase/app": "^14.9.4",
@@ -40,6 +41,7 @@
     "react-native-dropdown-picker": "^5.4.2",
     "react-native-element-dropdown": "^1.8.12",
     "react-native-gesture-handler": "~2.2.1",
+    "react-native-material-dropdown-v2-fixed": "^0.11.3",
     "react-native-modal": "^13.0.1",
     "react-native-multi-slider": "^0.3.6",
     "react-native-neat-date-picker": "^1.2.4",
