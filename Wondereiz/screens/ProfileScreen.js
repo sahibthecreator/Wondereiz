@@ -30,7 +30,7 @@ export default function Profile(props) {
   let [bio, setBio] = useState("");
   let [picture, setPicture] = useState(null);
   let [procentage, setProcentage] = useState("");
-  let [refreshing, setRefreshing] = React.useState(false);
+  let [refreshing, setRefreshing] = useState(false);
   let userUid;
 
   if(props.currentUser == null) {
@@ -46,12 +46,12 @@ export default function Profile(props) {
   }
   
   const onRefresh = React.useCallback(() => {
-    setUpBio("");
+    FetchData();
     setRefreshing(true);
     wait(200).then(() => setRefreshing(false));
   }, []);
 
-  useEffect(() => { 
+  function FetchData() {
     const myDoc = doc(db, "User", userUid);
 
     getDoc(myDoc)
@@ -72,6 +72,10 @@ export default function Profile(props) {
       .then((url) => {
         setPicture(url);
       }); 
+  }
+
+  useEffect(() => { 
+    FetchData();
   },[]);
 
   const updateBio = () => {
