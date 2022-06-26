@@ -11,8 +11,7 @@ import { TextInput } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { doc, setDoc } from "firebase/firestore";
 import Select from "../components/react-native-select";
-
-
+import { Dropdown } from "react-native-material-dropdown-v2-fixed";
 
 export default function Register() {
   const [firstName, setFirstName] = useState("");
@@ -28,31 +27,29 @@ export default function Register() {
   const [preference, setPreference] = useState("");
   //Making the constants
 
-  //--------------------City Picker-----------------------------//
-
   const data_city = [
-    { text: "Amsterdam", value: 1 },
-    { text: "Eindhoven", value: 2 },
-    { text: "Rotterdam", value: 4 },
-    { text: "The Hague", value: 5 },
-    { text: "Utrecht", value: 6 },
-    { text: "Tilburg", value: 7 },
-    { text: "Groningen", value: 8 },
-    { text: "Emmen", value: 9 },
-    { text: "Zwolle", value: 10 },
+    { value: "Amsterdam" },
+    { value: "Eindhoven" },
+    { value: "Rotterdam" },
+    { value: "The Hague" },
+    { value: "Utrecht" },
+    { value: "Tilburg" },
+    { value: "Groningen" },
+    { value: "Emmen" },
+    { value: "Zwolle" },
   ];
+
+  //--------------------City Picker-----------------------------//
 
   const config = {
     fontSize: 15,
-    fontWeight: '500',
+    fontWeight: "500",
     backgroundColor: "lightgray",
     textColor: "black",
     selectedBackgroundColor: "lightgray",
     selectedTextColor: "purple",
     selectedFontWeight: "bold",
   };
-
-
 
   //Checking if is empty and validating pasword
   const validatePassword = () => {
@@ -85,10 +82,10 @@ export default function Register() {
                 lastName: lastName,
                 email: email,
                 username: username,
-                dateOfBirth: '',
+                dateOfBirth: "",
                 gender: gender,
-                city: selectedCity
-
+                city: selectedCity,
+                savedRoomsId: [""]
               });
             })
             .catch((err) => alert(err.message));
@@ -101,10 +98,8 @@ export default function Register() {
     setConfirmPassword("");
   }
 
-
-
   return (
-    <SafeAreaView style={{ alignItems: 'center' }}>
+    <SafeAreaView style={{ alignItems: "center" }}>
       {/*
       <TouchableOpacity
           onPress={() => props.navigation.navigate("Welcome")}
@@ -126,7 +121,6 @@ export default function Register() {
             <Text style={styles.logoTxt}>Register</Text>
             {error !== "" ? <Text>{error}</Text> : null}
             <View>
-
               <Text style={styles.labels}>First name</Text>
               <TextInput
                 style={styles.input}
@@ -181,46 +175,61 @@ export default function Register() {
                 }
                 placeholderTextColor="#000"
               />
-
-
             </View>
-
 
             <View style={styles.section}>
               <TouchableOpacity
                 style={preference === "male" ? styles.selected : styles.button}
                 onPress={(preference) => setPreference("male")}
               >
-                <Image style={styles.icon} source={require("../assets/male_icon.png")} />
+                <Image
+                  style={styles.icon}
+                  source={require("../assets/male_icon.png")}
+                />
                 <Text style={styles.btnText}>Male</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={preference === "female" ? styles.selected : styles.button}
+                style={
+                  preference === "female" ? styles.selected : styles.button
+                }
                 onPress={(preference) => setPreference("female")}
               >
-                <Image style={styles.icon} source={require("../assets/female_icon.png")} />
+                <Image
+                  style={styles.icon}
+                  source={require("../assets/female_icon.png")}
+                />
                 <Text style={styles.btnText}>Female</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={preference === "Not specified" ? styles.selected : styles.button}
+                style={
+                  preference === "Not specified"
+                    ? styles.selected
+                    : styles.button
+                }
                 onPress={(preference) => setPreference("Not specified")}
               >
                 <Text style={styles.btnText}>Not specified</Text>
               </TouchableOpacity>
             </View>
 
-
             {/* ---------------City Picker------------------ */}
 
-
-            <View style={{ zIndex: 200, width: 300, marginBottom: 8, alignSelf: 'center' }}>
-              <Text style={styles.selectLabel}>Select your city:</Text>
-              <Select
+            <View
+              style={{
+                zIndex: 200,
+                width: 300,
+                marginBottom: 8,
+                alignSelf: "center",
+              }}
+            >
+              <Dropdown
+                icon="chevron-down"
+                onChangeText={(value) => setSelectedCity(value)}
+                iconColor="#E1E1E1"
+                label="Select City from:"
                 data={data_city}
-                onSelect={(value) => setSelectedCity(value)}
-                value={selectedCity}
-                config={config}
-                placeholder={"City"}
+                useNativeDriver={true}
+                dropdownPosition={-5}
               />
             </View>
 
@@ -237,8 +246,6 @@ export default function Register() {
           </View>
         </View>
       </LinearGradient>
-
-
 
       {/* <Text onPress={() => props.navigation.navigate("TransitionPage1")}>
         TransitionPage1{" "}
@@ -271,16 +278,16 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   heading: {
-    alignSelf: 'center',
+    alignSelf: "center",
     fontSize: 30,
     color: "#8736AA",
   },
   input: {
-    alignSelf: 'center',
+    alignSelf: "center",
     borderWidth: 1,
     marginBottom: 10,
-    backgroundColor: '#dadada',
-    borderColor: '#dadada',
+    backgroundColor: "#dadada",
+    borderColor: "#dadada",
     borderRadius: 30,
     padding: 5,
     height: 40,
@@ -345,11 +352,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   labels: {
-    color: '#606060',
+    color: "#606060",
     marginBottom: 5,
     fontSize: 17,
     marginLeft: 40,
-
   },
 });
-
