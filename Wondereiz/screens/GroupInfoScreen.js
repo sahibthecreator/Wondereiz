@@ -31,26 +31,26 @@ export default function GroupInfoScreen(props) {
   let [userIds, setUserIds] = useState([]);
   let [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     let tempUsers = [];
     let queryRoom = query(collection(db, "Room"), where("id", "==", roomId));
     let participantIds =
       props.route.params.props.route.params.room.membersUserId;
-    
+
     //console.log(participantIds);
     for (let i = 0; i < participantIds.length; i++) {
       const participant = doc(db, "User", participantIds[i]);
       getDoc(participant).then((snapshot) => {
         if (snapshot.exists) tempUsers.push(snapshot.data());
-        Promise.all(tempUsers).then((tempUsers)=>{
+        Promise.all(tempUsers).then((tempUsers) => {
           setUsers(tempUsers);
           console.log(users);
         })
       });
     }
 
-   
+
   }, []);
 
   // useEffect(() => {
@@ -91,7 +91,7 @@ export default function GroupInfoScreen(props) {
       <View style={styles.partecipantBoxContainer}>
         <PartecipantBoxHeader post={post} />
         <TouchableOpacity
-          onPress={() => props.navigation.navigate("Profile", { props })}
+          onPress={() => props.navigation.navigate("Profile", { userIds: users })}
         >
           <Image
             source={{
@@ -138,13 +138,13 @@ export default function GroupInfoScreen(props) {
   //const [partecipants] = useCollectionData(query(ref));
 
   function DisplayPartecipants(props) {
-    const { username, profilePicture } = props.partecipant;
+    const { firstName, profilePicture } = props.partecipant;
 
     return (
       <PartecipantBox
         post={{
           partecipant_picture: profilePicture,
-          caption: username,
+          caption: firstName,
         }}
       />
     );
