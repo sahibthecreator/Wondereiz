@@ -30,40 +30,60 @@ export default function GroupInfoScreen(props) {
   let roomId = props.route.params.roomId;
   let [userIds, setUserIds] = useState([]);
   let [users, setUsers] = useState([]);
-
-  let queryRoom = query(collection(db, "Room"), where("id", "==", roomId));
-
-  useEffect(() => {
-    getDocs(queryRoom).then((snapshot) => {
-      snapshot.docs.forEach((e) => {
-        setUserIds(e.data().membersUserId);
-      });
-    });
-  }, []);
-
+  const [loading, setLoading] = useState(true);
+  
   useEffect(() => {
     let tempUsers = [];
-
-    userIds.forEach((userId) => {
-      let userDoc = doc(db, "User", userId);
-      getDoc(userDoc).then((snapshot) => {
-        if (snapshot.exists) {
-          tempUsers.push(snapshot.data());
-          console.log("Query works for users!!!");
-        }
+    let queryRoom = query(collection(db, "Room"), where("id", "==", roomId));
+    let participantIds =
+      props.route.params.props.route.params.room.membersUserId;
+    
+    //console.log(participantIds);
+    for (let i = 0; i < participantIds.length; i++) {
+      const participant = doc(db, "User", participantIds[i]);
+      getDoc(participant).then((snapshot) => {
+        if (snapshot.exists) tempUsers.push(snapshot.data());
+        Promise.all(tempUsers).then((tempUsers)=>{
+          setUsers(tempUsers);
+          console.log(users);
+        })
       });
-    });
-    setUsers(tempUsers);
-    //console.log(users);
+    }
+
+   
   }, []);
 
+  // useEffect(() => {
+  //   getDocs(queryRoom).then((snapshot) => {
+  //     snapshot.docs.forEach((e) => {
+  //       setUserIds(e.data().membersUserId);
+  //     });
+  //   });
+  // }, []);
+
+  // useEffect(() => {
+  //   let tempUsers = [];
+
+  //   userIds.forEach((userId) => {
+  //     let userDoc = doc(db, "User", userId);
+  //     getDoc(userDoc).then((snapshot) => {
+  //       if (snapshot.exists) {
+  //         tempUsers.push(snapshot.data());
+  //         //console.log("Query works for users!!!");
+  //       }
+  //     });
+  //   });
+  //   setUsers(tempUsers);
+  //   //console.log(users);
+  // }, []);
+
   userIds.forEach((userId) => {
-    console.log("This should be each id: " + userId);
+    //console.log("This should be each id: " + userId);
   });
 
   users.forEach((user) => {
     console.log("Users are: " + user.firstName);
-    console.log("Users profile picture is: " + user.profilePicture);
+    //console.log("Users profile picture is: " + user.profilePicture);
   });
 
   const PartecipantBox = ({ post }) => {
@@ -115,7 +135,7 @@ export default function GroupInfoScreen(props) {
   //console.log(props);
   const ref = collection(db, "User");
 
-  const [partecipants] = useCollectionData(query(ref));
+  //const [partecipants] = useCollectionData(query(ref));
 
   function DisplayPartecipants(props) {
     const { username, profilePicture } = props.partecipant;
@@ -186,14 +206,14 @@ export default function GroupInfoScreen(props) {
             marginTop: 35,
           }}
         >
-          {partecipants?.length} Partecipants
+          {users.length} Partecipants
         </Text>
 
         <View style={styles.partecipants}>
-          {partecipants ? (
+          {users.length !== 0 ? (
             <View>
-              {partecipants &&
-                partecipants.map((prt, prtIndex) => (
+              {users &&
+                users.map((prt, prtIndex) => (
                   <DisplayPartecipants key={prtIndex} partecipant={prt} />
                 ))}
             </View>
