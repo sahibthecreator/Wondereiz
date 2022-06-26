@@ -226,7 +226,7 @@ const [show, setShow] = useState(false);
             onPress={showDatepicker}
             style={styles.datePickerButton}
             >
-              <Text style={styles.datePickerText}>Pick up a date</Text>
+              <Text style={styles.datePickerText}>Select your date of birth</Text>
             </TouchableOpacity>
             {show && (
           <DateTimePicker
