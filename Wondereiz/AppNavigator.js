@@ -11,7 +11,7 @@ import WelcomeScreen from "./screens/WelcomeScreen";
 import MyTripsScreen from './screens/MyTripsScreen'
 import TransitionPage1Screen from "./screens/TransitionPage1Screen";
 import TransitionPage2Screen from "./screens/TransitionPage2Screen";
-import TripDetailsScreen from "./screens/TripDetailsScreen";
+import Trip_details from "./screens/TripDetailsScreen";
 import FiltersScreen from "./screens/FiltersScreen";
 import AboutMeScreen from './screens/AboutMeScreen';
 import ProfilePictureScreen from './screens/ProfilePictureScreen';
@@ -35,7 +35,7 @@ const AppNavigator = () => (
             <Screen name="GroupInfo" component={GroupInfoScreen} />
             <Screen name="TransitionPage1" component={TransitionPage1Screen} />
             <Screen name="TransitionPage2" component={TransitionPage2Screen} />
-            <Screen name="TripDetails" component={TripDetailsScreen} />
+            <Screen name="TripDetails" component={Trip_details} />
             <Screen name="Filters" component={FiltersScreen} />
             <Screen name="Notifications" component={NotificationsPage} />
             <Screen name="GroupInfoScreen" component={GroupInfoScreen} />

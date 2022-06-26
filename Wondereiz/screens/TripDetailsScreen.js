@@ -26,10 +26,10 @@ import {
 //const roomId = props.navigation.getParam("roomsId", "room1");
 const userUid = "stIHaXMezOgz97wEPXVZp2gsaXD2";
 const roomId = "room9";
-let [favourite, setFavourite] = useState(false);
-let [joined, setJoined] = useState(false);
 
 export default function Trip_details(props) {
+  let [favourite, setFavourite] = useState(false);
+  let [joined, setJoined] = useState(false);
   let savedRooms = [""];
   const myDoc = doc(db, "User", userUid);
 
