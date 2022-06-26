@@ -3,14 +3,14 @@ import { Text, StyleSheet, Image, TouchableOpacity, View, SafeAreaView, TextInpu
 import {Slider} from "@react-native-community/slider";
 import {Select} from "../components/react-native-select";
 //import {DatePicker} from "react-native-neat-date-picker";
-import {TimePicker} from 'react-native-simple-time-picker';
+// {TimePicker} from 'react-native-simple-time-picker';
 
 
 
 
 
 
-function CreateTrip() {
+export default function CreateTrip(props) {
 
     const [minAge, setMinAge] = useState("15");
     const [maxAge, setMaxAge] = useState("15");
@@ -98,7 +98,7 @@ function CreateTrip() {
             id: id,
             adminUserUid: app.auth().currentUser.uid,
             membersUserUid: [],
-            mainPicture: "http://t3.gstatic.com/licensed-image?q=tbn:ANd9GcSFmmKZAP570tzz3jLwPXqQ8CiiIEHp_icEOkZtKfXFs_h_PFuVtZePRHSfw_zUyQp3",
+            //mainPicture: "http://t3.gstatic.com/licensed-image?q=tbn:ANd9GcSFmmKZAP570tzz3jLwPXqQ8CiiIEHp_icEOkZtKfXFs_h_PFuVtZePRHSfw_zUyQp3",
             description: message,
             cityFrom: selectedCityFrom,
             cityTo: selectedCityTo,
@@ -142,7 +142,7 @@ function CreateTrip() {
                     />
                 </View>
 
-                {/* --------------Date picker------------------ */}
+                {/* --------------Date picker------------------ 
                 <View style={{ flex: 1, alignContent: 'center', justifyContent: 'center', marginBottom: 15 }}>
 
                     <TouchableOpacity onPress={openDatePicker} style={{ flex: 1, width: "90%", height: 32, backgroundColor: '#d9d9da', borderRadius: 15, }} >
@@ -155,16 +155,18 @@ function CreateTrip() {
                         onConfirm={(date) => onConfirm(date)}
                     />
                 </View>
-
+                */}
 
 
                 <View>
-                    {/* --------------Time picker------------------ */}
+                    {/* --------------Time picker------------------ 
                     <Text style={{ fontSize: 17, color: '#606060', paddingBottom: 5 }}>
                         Your time: {value.hours}:{value.minutes}
                     </Text>
                     <TimePicker defaultValue={value} value={value} onChange={handleChange} style={{ backgroundColor: 'red' }} />
-                </View>
+                    */}
+                    </View>
+                
 
 
 
@@ -266,5 +268,3 @@ const styles = StyleSheet.create({
         color: '#606060',
     },
 });
-
-export default CreateTrip;

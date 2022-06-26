@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Button, View, Text, StyleSheet, SafeAreaView} from "react-native";
-import { app } from "../Config";
+import { app, db } from "../Config";
 import { useState } from "react";
 import {Image, TouchableOpacity} from "react-native";
 import {
@@ -11,6 +11,9 @@ import { TextInput } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { doc, setDoc } from "firebase/firestore";
 import Select from "../components/react-native-select";
+import DateTimePicker from "@react-native-community/datetimepicker"
+
+//import {DatePicker} from "react-native-neat-date-picker";
 
 
 
@@ -53,6 +56,31 @@ import Select from "../components/react-native-select";
 };
 
 
+const [date, setDate] = useState(new Date(1598051730000));
+const [mode, setMode] = useState("date");
+const [show, setShow] = useState(false);
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    
+    setShow(false);
+    setDate(currentDate);
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode("date");
+  };
+
+  const showTimepicker = () => {
+    showMode("time");
+  };
+
+
 
   //Checking if is empty and validating pasword
   const validatePassword = () => {
@@ -85,8 +113,8 @@ import Select from "../components/react-native-select";
                 lastName: lastName,
                 email: email,
                 username: username,
-                dateOfBirth: '',
-                gender: gender,
+                dateOfBirth: date,
+                gender: preference,
                 city:selectedCity
 
               });
@@ -95,10 +123,15 @@ import Select from "../components/react-native-select";
         })
         .catch((err) => setError(err.message));
     }
+    setFirstName("");
+    setLastName("");
     setUsername("");
     setEmail("");
     setPassword("");
     setConfirmPassword("");
+    setEmail("");
+    setUsername("");
+
   }
 
 
@@ -119,11 +152,11 @@ import Select from "../components/react-native-select";
         </TouchableOpacity>
           */}
       
-      <Text style={styles.heading}>Sign up</Text>
+      
       <LinearGradient colors={["white", "white"]} style={styles.background}>
       <View style={styles.container}>
         <View>
-          <Text style={styles.logoTxt}>Register</Text>
+          <Text style={styles.heading}>Sign up</Text>
           {error !== "" ? <Text>{error}</Text> : null}
           <View>
 
@@ -133,7 +166,7 @@ import Select from "../components/react-native-select";
               value={firstName}
               placeholder="First name"
               onChangeText={(firstName) => setFirstName(firstName)}
-              placeholderTextColor="#000"
+              placeholderTextColor="grey"
             />
              
             <Text style={styles.labels}>Last name</Text>
@@ -142,7 +175,7 @@ import Select from "../components/react-native-select";
               value={lastName}
               placeholder="Last name"
               onChangeText={(lastName) => setLastName(lastName)}
-              placeholderTextColor="#000"
+              placeholderTextColor="grey"
             />
             
             <Text style={styles.labels}>Username</Text>
@@ -151,7 +184,7 @@ import Select from "../components/react-native-select";
               value={username}
               placeholder="Choose a username"
               onChangeText={(username) => setUsername(username)}
-              placeholderTextColor="#000"
+              placeholderTextColor="grey"
             />
             <Text style={styles.labels}>E-mail address</Text>
             <TextInput
@@ -159,7 +192,7 @@ import Select from "../components/react-native-select";
               value={email}
               placeholder="Enter your email"
               onChangeText={(email) => setEmail(email)}
-              placeholderTextColor="#000"
+              placeholderTextColor="grey"
             />
 
             <Text style={styles.labels}>Password</Text>
@@ -168,7 +201,7 @@ import Select from "../components/react-native-select";
               value={password}
               placeholder="Enter your password"
               onChangeText={(password) => setPassword(password)}
-              placeholderTextColor="#000"
+              placeholderTextColor="grey"
             />
 
           <Text style={styles.labels}>Confirm password</Text>
@@ -179,11 +212,31 @@ import Select from "../components/react-native-select";
               onChangeText={(confirmPassword) =>
                 setConfirmPassword(confirmPassword)
               }
-              placeholderTextColor="#000"
+              placeholderTextColor="grey"
             />
             
 
           </View>
+
+
+          {/* Date picker*/}
+
+          
+          <TouchableOpacity 
+            onPress={showDatepicker}
+            style={styles.datePickerButton}
+            >
+              <Text style={styles.datePickerText}>Pick up a date</Text>
+            </TouchableOpacity>
+            {show && (
+          <DateTimePicker
+            value={date}
+            mode={mode}
+            is24Hour={true}
+            onChange={onChange}
+          />
+           )}
+          {/*End  */}
 
           
           <View style={styles.section}>
@@ -261,6 +314,7 @@ import Select from "../components/react-native-select";
     }
     const styles = StyleSheet.create({
       container: {
+        marginTop:140,
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
@@ -285,6 +339,7 @@ import Select from "../components/react-native-select";
         padding: 5,
         height:40,
         width:300,
+        paddingHorizontal:15,
       },
       logoTxt: {
         fontWeight: "600",
@@ -350,6 +405,20 @@ import Select from "../components/react-native-select";
         fontSize: 17,
         marginLeft: 40,
     
+      },
+      datePickerButton:{
+        alignSelf:"center",
+        justifyContent: "center",
+        borderRadius: 18,
+        width: 300,
+        backgroundColor: "#dadada",
+        height: 40,
+        marginTop: 10,
+        marginBottom: 10,
+      },
+      datePickerText:{
+        color: 'grey',
+        marginLeft: 15,
       },
     });
     
