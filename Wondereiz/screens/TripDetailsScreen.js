@@ -1,5 +1,12 @@
 import React, { Component, useState, useEffect } from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { app, db } from "../Config";
 import {
@@ -14,21 +21,20 @@ import {
   updateDoc,
 } from "firebase/firestore";
 
+//console.log("User UID: " + app.auth().currentUser.uid);
+//const userUid = app.auth().currentUser.uid;
+//const roomId = props.navigation.getParam("roomsId", "room1");
 const userUid = "stIHaXMezOgz97wEPXVZp2gsaXD2";
-const roomId = "room3";
+const roomId = "room9";
+let [favourite, setFavourite] = useState(false);
+let [joined, setJoined] = useState(false);
 
 export default function Trip_details(props) {
-  //console.log("User UID: " + app.auth().currentUser.uid);
-  //const userUid = app.auth().currentUser.uid;
-  //const roomId = props.navigation.getParam("roomsId", "room1");
-
   let savedRooms = [""];
   const myDoc = doc(db, "User", userUid);
 
   let [info, setInfo] = useState([]);
   let [rooms, setRooms] = useState([]);
-  let [favourite, setFavourite] = useState(false);
-  let [joined, setJoined] = useState(false);
   let [favRooms, setFavRooms] = useState([]);
   let [joinedRooms, setJoinedRooms] = useState([]);
   let [numOfMembers, setNumOfMembers] = useState([]);
@@ -51,11 +57,7 @@ export default function Trip_details(props) {
     getDoc(myDoc)
       .then((snapshot) => {
         if (snapshot.exists) {
-          let q = query(
-            collection(db, "Room"),
-            where("membersUserId", "array-contains", userUid),
-            where("id", "==", roomId)
-          );
+          let q = query(collection(db, "Room"), where("id", "==", roomId));
           onSnapshot(q, (snapshot) => {
             let savRooms = [];
             snapshot.docs.forEach((doc) => {
@@ -105,7 +107,7 @@ export default function Trip_details(props) {
         if (snapshot.exists) {
           let qr = query(
             collection(db, "Room"),
-            where("adminUid", "==", userUId),
+            where("adminUid", "==", userUid),
             where("id", "==", roomId)
           );
           onSnapshot(qr, (snapshot) => {
@@ -204,13 +206,17 @@ export default function Trip_details(props) {
         </View>
       </View>
       <FavButton />
+      <JoinButton />
     </SafeAreaView>
   );
 }
 
 const FavButton = ({ favourite }) => {
-  const favouriteText = "I like this trip";
-  const unfavouriteText = "You liked this trip";
+  let savedRooms = [""];
+  const myDoc = doc(db, "User", userUid);
+
+  const favouriteText = "You liked this trip";
+  const unfavouriteText = "I like this trip";
 
   const [likeText, setLikeText] = useState(unfavouriteText);
   let [savedRoom, setSavedRoom] = useState("");
@@ -218,7 +224,6 @@ const FavButton = ({ favourite }) => {
     console.log("useEffect called");
     setLikeText(favourite ? favouriteText : unfavouriteText);
   }, []);
-  const myDoc = doc(db, "User", userUid);
 
   function Create() {
     console.log(roomId);
@@ -252,11 +257,51 @@ const FavButton = ({ favourite }) => {
 };
 
 const JoinButton = ({ joined }) => {
-  const joinText = "Join the trip";
-  const unJoinText = "You joined this trip";
+  const joinText = "You joined the trip";
+  const unJoinText = "Join this trip";
+  const myDoc = doc(db, "User", userUid);
 
   const [joinedText, setJoinedText] = useState(unJoinText);
   let [membersUserId, setMembersUserId] = useState("");
+  let [info, setInfo] = useState([]);
+  let [numOfMembers, setNumOfMembers] = useState([]);
+
+  useEffect(() => {
+    let qry = query(collection(db, "Room"), where("id", "==", roomId));
+
+    onSnapshot(qry, (snapshot) => {
+      let infoRooms = [];
+      snapshot.docs.forEach((doc) => {
+        infoRooms.push(doc.data());
+      });
+      setInfo(infoRooms);
+      console.log("Room" + info[0]);
+    });
+  }, []);
+
+  useEffect(() => {
+    getDoc(myDoc)
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          let q = query(collection(db, "Room"), where("id", "==", roomId));
+          onSnapshot(q, (snapshot) => {
+            let savRooms = [];
+            snapshot.docs.forEach((doc) => {
+              savRooms.push(doc.data());
+              console.log(doc.data());
+            });
+            setNumOfMembers(savRooms);
+            console.log("Users:" + numOfMembers[0]);
+          });
+        } else {
+          console.log("No data");
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  }, []);
+
   useEffect(() => {
     console.log("useEffect called");
     console.log("userId:" + userUid);
@@ -265,19 +310,31 @@ const JoinButton = ({ joined }) => {
   const myDocR = doc(db, "Room", roomId);
 
   function Create() {
-    console.log(userUId);
+    console.log(userUid);
 
     if (joinedText == unJoinText) {
       setJoinedText(joinText);
 
-      updateDoc(myDocR, {
-        membersUserId: arrayUnion(userUId),
-      });
+      if (numOfMembers[0]?.membersUserId.length < info[0]?.maxMembers) {
+        updateDoc(myDocR, {
+          membersUserId: arrayUnion(userUid),
+        });
+      } else {
+        Alert.alert(
+          "Maximum number of members has been reached",
+          "No place in room left"[
+            {
+              text: "OK",
+              onPress: () => console.log("Cancel Pressed"),
+            }
+          ]
+        );
+      }
     } else {
       setJoinedText(unJoinText);
 
       updateDoc(myDocR, {
-        membersUserId: arrayRemove(userUId),
+        membersUserId: arrayRemove(userUid),
       });
     }
   }
@@ -287,7 +344,7 @@ const JoinButton = ({ joined }) => {
       <TouchableOpacity
         style={styles.join}
         joined={joined}
-        onPress={(membersUserId) => setMembersUserId(userUId) + Create()}
+        onPress={() => setMembersUserId(userUid) + Create()}
       >
         <Text style={styles.join_text}>{joinedText}</Text>
       </TouchableOpacity>
@@ -388,10 +445,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    width: 250,
+    width: 210,
     height: 100,
     position: "absolute",
-    bottom: -50,
+    bottom: -250,
     left: -210,
   },
   heart: {
@@ -404,8 +461,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#D50FBC",
     textAlign: "center",
-    marginTop: 30,
-    marginRight: 25,
+    marginTop: 35,
+    marginRight: 15,
   },
   join: {
     padding: 35,
@@ -421,8 +478,8 @@ const styles = StyleSheet.create({
     width: 210,
     height: 100,
     position: "absolute",
-    bottom: -300,
-    right: -0,
+    bottom: -36,
+    right: -210,
   },
   join_text: {
     fontWeight: "bold",
