@@ -12,6 +12,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { doc, setDoc } from "firebase/firestore";
 import Select from "../components/react-native-select";
 import { Dropdown } from "react-native-material-dropdown-v2-fixed";
+import DateTimePicker from "@react-native-community/datetimepicker";
+
+//import {DatePicker} from "react-native-neat-date-picker";
 
 export default function Register() {
   const [firstName, setFirstName] = useState("");
@@ -51,6 +54,30 @@ export default function Register() {
     selectedFontWeight: "bold",
   };
 
+  const [date, setDate] = useState(new Date(1598051730000));
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate;
+
+    setShow(false);
+    setDate(currentDate);
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode("date");
+  };
+
+  const showTimepicker = () => {
+    showMode("time");
+  };
+
   //Checking if is empty and validating pasword
   const validatePassword = () => {
     if (password !== "" && confirmPassword !== "") {
@@ -82,20 +109,26 @@ export default function Register() {
                 lastName: lastName,
                 email: email,
                 username: username,
-                dateOfBirth: "",
                 gender: gender,
                 city: selectedCity,
-                savedRoomsId: [""]
+                savedRoomsId: [""],
+                dateOfBirth: date,
+                gender: preference,
+                city: selectedCity,
               });
             })
             .catch((err) => alert(err.message));
         })
         .catch((err) => setError(err.message));
     }
+    setFirstName("");
+    setLastName("");
     setUsername("");
     setEmail("");
     setPassword("");
     setConfirmPassword("");
+    setEmail("");
+    setUsername("");
   }
 
   return (
@@ -114,11 +147,10 @@ export default function Register() {
         </TouchableOpacity>
           */}
 
-      <Text style={styles.heading}>Sign up</Text>
       <LinearGradient colors={["white", "white"]} style={styles.background}>
         <View style={styles.container}>
           <View>
-            <Text style={styles.logoTxt}>Register</Text>
+            <Text style={styles.heading}>Sign up</Text>
             {error !== "" ? <Text>{error}</Text> : null}
             <View>
               <Text style={styles.labels}>First name</Text>
@@ -127,7 +159,7 @@ export default function Register() {
                 value={firstName}
                 placeholder="First name"
                 onChangeText={(firstName) => setFirstName(firstName)}
-                placeholderTextColor="#000"
+                placeholderTextColor="grey"
               />
 
               <Text style={styles.labels}>Last name</Text>
@@ -136,7 +168,7 @@ export default function Register() {
                 value={lastName}
                 placeholder="Last name"
                 onChangeText={(lastName) => setLastName(lastName)}
-                placeholderTextColor="#000"
+                placeholderTextColor="grey"
               />
 
               <Text style={styles.labels}>Username</Text>
@@ -145,7 +177,7 @@ export default function Register() {
                 value={username}
                 placeholder="Choose a username"
                 onChangeText={(username) => setUsername(username)}
-                placeholderTextColor="#000"
+                placeholderTextColor="grey"
               />
               <Text style={styles.labels}>E-mail address</Text>
               <TextInput
@@ -153,7 +185,7 @@ export default function Register() {
                 value={email}
                 placeholder="Enter your email"
                 onChangeText={(email) => setEmail(email)}
-                placeholderTextColor="#000"
+                placeholderTextColor="grey"
               />
 
               <Text style={styles.labels}>Password</Text>
@@ -162,7 +194,7 @@ export default function Register() {
                 value={password}
                 placeholder="Enter your password"
                 onChangeText={(password) => setPassword(password)}
-                placeholderTextColor="#000"
+                placeholderTextColor="grey"
               />
 
               <Text style={styles.labels}>Confirm password</Text>
@@ -173,9 +205,29 @@ export default function Register() {
                 onChangeText={(confirmPassword) =>
                   setConfirmPassword(confirmPassword)
                 }
-                placeholderTextColor="#000"
+                placeholderTextColor="grey"
               />
             </View>
+
+            {/* Date picker*/}
+
+            <TouchableOpacity
+              onPress={showDatepicker}
+              style={styles.datePickerButton}
+            >
+              <Text style={styles.datePickerText}>
+                Select your date of birth
+              </Text>
+            </TouchableOpacity>
+            {show && (
+              <DateTimePicker
+                value={date}
+                mode={mode}
+                is24Hour={true}
+                onChange={onChange}
+              />
+            )}
+            {/*End  */}
 
             <View style={styles.section}>
               <TouchableOpacity
@@ -268,6 +320,7 @@ export default function Register() {
 }
 const styles = StyleSheet.create({
   container: {
+    marginTop: 140,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -292,6 +345,7 @@ const styles = StyleSheet.create({
     padding: 5,
     height: 40,
     width: 300,
+    paddingHorizontal: 15,
   },
   logoTxt: {
     fontWeight: "600",
@@ -356,5 +410,19 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 17,
     marginLeft: 40,
+  },
+  datePickerButton: {
+    alignSelf: "center",
+    justifyContent: "center",
+    borderRadius: 18,
+    width: 300,
+    backgroundColor: "#dadada",
+    height: 40,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  datePickerText: {
+    color: "grey",
+    marginLeft: 15,
   },
 });
