@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { Button, View, Text, StyleSheet, SafeAreaView} from "react-native";
+import { Button, View, Text, StyleSheet, SafeAreaView } from "react-native";
 import { app, db } from "../Config";
 import { useState } from "react";
-import {Image, TouchableOpacity} from "react-native";
+import { Image, TouchableOpacity } from "react-native";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
@@ -17,7 +17,7 @@ import DateTimePicker from "@react-native-community/datetimepicker"
 
 
 
- export default function Register() {
+export default function Register() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
@@ -30,7 +30,7 @@ import DateTimePicker from "@react-native-community/datetimepicker"
   const [selectedCity, setSelectedCity] = useState();
   const [preference, setPreference] = useState("");
   //Making the constants
-  
+
   //--------------------City Picker-----------------------------//
 
   const data_city = [
@@ -43,7 +43,7 @@ import DateTimePicker from "@react-native-community/datetimepicker"
     { text: "Groningen", value: 8 },
     { text: "Emmen", value: 9 },
     { text: "Zwolle", value: 10 },
-];
+  ];
 
   const config = {
     fontSize: 15,
@@ -53,7 +53,7 @@ import DateTimePicker from "@react-native-community/datetimepicker"
     selectedBackgroundColor: "lightgray",
     selectedTextColor: "purple",
     selectedFontWeight: "bold",
-};
+  };
 
 
 const [date, setDate] = useState(new Date(1598051730000));
@@ -113,9 +113,9 @@ const [show, setShow] = useState(false);
                 lastName: lastName,
                 email: email,
                 username: username,
-                dateOfBirth: date,
-                gender: preference,
-                city:selectedCity
+                dateOfBirth: '',
+                gender: gender,
+                city: selectedCity
 
               });
             })
@@ -151,145 +151,125 @@ const [show, setShow] = useState(false);
           />
         </TouchableOpacity>
           */}
-      
-      
+
+      <Text style={styles.heading}>Sign up</Text>
       <LinearGradient colors={["white", "white"]} style={styles.background}>
-      <View style={styles.container}>
-        <View>
-          <Text style={styles.heading}>Sign up</Text>
-          {error !== "" ? <Text>{error}</Text> : null}
+        <View style={styles.container}>
           <View>
+            <Text style={styles.logoTxt}>Register</Text>
+            {error !== "" ? <Text>{error}</Text> : null}
+            <View>
 
-          <Text style={styles.labels}>First name</Text>
-          <TextInput
-              style={styles.input}
-              value={firstName}
-              placeholder="First name"
-              onChangeText={(firstName) => setFirstName(firstName)}
-              placeholderTextColor="grey"
-            />
-             
-            <Text style={styles.labels}>Last name</Text>
-            <TextInput
-              style={styles.input}
-              value={lastName}
-              placeholder="Last name"
-              onChangeText={(lastName) => setLastName(lastName)}
-              placeholderTextColor="grey"
-            />
-            
-            <Text style={styles.labels}>Username</Text>
-            <TextInput
-              style={styles.input}
-              value={username}
-              placeholder="Choose a username"
-              onChangeText={(username) => setUsername(username)}
-              placeholderTextColor="grey"
-            />
-            <Text style={styles.labels}>E-mail address</Text>
-            <TextInput
-              style={styles.input}
-              value={email}
-              placeholder="Enter your email"
-              onChangeText={(email) => setEmail(email)}
-              placeholderTextColor="grey"
-            />
+              <Text style={styles.labels}>First name</Text>
+              <TextInput
+                style={styles.input}
+                value={firstName}
+                placeholder="First name"
+                onChangeText={(firstName) => setFirstName(firstName)}
+                placeholderTextColor="#000"
+              />
 
-            <Text style={styles.labels}>Password</Text>
-            <TextInput
-              style={styles.input}
-              value={password}
-              placeholder="Enter your password"
-              onChangeText={(password) => setPassword(password)}
-              placeholderTextColor="grey"
-            />
+              <Text style={styles.labels}>Last name</Text>
+              <TextInput
+                style={styles.input}
+                value={lastName}
+                placeholder="Last name"
+                onChangeText={(lastName) => setLastName(lastName)}
+                placeholderTextColor="#000"
+              />
 
-          <Text style={styles.labels}>Confirm password</Text>
-            <TextInput
-              style={styles.input}
-              value={confirmPassword}
-              placeholder="Confirm password"
-              onChangeText={(confirmPassword) =>
-                setConfirmPassword(confirmPassword)
-              }
-              placeholderTextColor="grey"
-            />
-            
+              <Text style={styles.labels}>Username</Text>
+              <TextInput
+                style={styles.input}
+                value={username}
+                placeholder="Choose a username"
+                onChangeText={(username) => setUsername(username)}
+                placeholderTextColor="#000"
+              />
+              <Text style={styles.labels}>E-mail address</Text>
+              <TextInput
+                style={styles.input}
+                value={email}
+                placeholder="Enter your email"
+                onChangeText={(email) => setEmail(email)}
+                placeholderTextColor="#000"
+              />
 
-          </View>
+              <Text style={styles.labels}>Password</Text>
+              <TextInput
+                style={styles.input}
+                value={password}
+                placeholder="Enter your password"
+                onChangeText={(password) => setPassword(password)}
+                placeholderTextColor="#000"
+              />
 
-
-          {/* Date picker*/}
-
-          
-          <TouchableOpacity 
-            onPress={showDatepicker}
-            style={styles.datePickerButton}
-            >
-              <Text style={styles.datePickerText}>Pick up a date</Text>
-            </TouchableOpacity>
-            {show && (
-          <DateTimePicker
-            value={date}
-            mode={mode}
-            is24Hour={true}
-            onChange={onChange}
-          />
-           )}
-          {/*End  */}
-
-          
-          <View style={styles.section}>
-          <TouchableOpacity
-            style={preference === "male" ? styles.selected : styles.button}
-            onPress={(preference) => setPreference("male")}
-          >
-            <Image style={styles.icon} source={require("../assets/male_icon.png")}/>
-            <Text style={styles.btnText}>Male</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={preference === "female" ? styles.selected : styles.button}
-            onPress={(preference) => setPreference("female")}
-          >
-            <Image style={styles.icon} source={require("../assets/female_icon.png")}/>
-            <Text style={styles.btnText}>Female</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={preference === "Not specified" ? styles.selected : styles.button}
-            onPress={(preference) => setPreference("Not specified")}
-          >
-            <Text style={styles.btnText}>Not specified</Text>
-          </TouchableOpacity>
-          </View>
+              <Text style={styles.labels}>Confirm password</Text>
+              <TextInput
+                style={styles.input}
+                value={confirmPassword}
+                placeholder="Confirm password"
+                onChangeText={(confirmPassword) =>
+                  setConfirmPassword(confirmPassword)
+                }
+                placeholderTextColor="#000"
+              />
 
 
-          {/* ---------------City Picker------------------ */}
+            </View>
 
 
-          <View style={{ zIndex: 200, width: 300, marginBottom: 8, alignSelf: 'center' }}>
-            <Text style={styles.selectLabel}>Select your city:</Text>
-            <Select
+            <View style={styles.section}>
+              <TouchableOpacity
+                style={preference === "male" ? styles.selected : styles.button}
+                onPress={(preference) => setPreference("male")}
+              >
+                <Image style={styles.icon} source={require("../assets/male_icon.png")} />
+                <Text style={styles.btnText}>Male</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={preference === "female" ? styles.selected : styles.button}
+                onPress={(preference) => setPreference("female")}
+              >
+                <Image style={styles.icon} source={require("../assets/female_icon.png")} />
+                <Text style={styles.btnText}>Female</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={preference === "Not specified" ? styles.selected : styles.button}
+                onPress={(preference) => setPreference("Not specified")}
+              >
+                <Text style={styles.btnText}>Not specified</Text>
+              </TouchableOpacity>
+            </View>
+
+
+            {/* ---------------City Picker------------------ */}
+
+
+            <View style={{ zIndex: 200, width: 300, marginBottom: 8, alignSelf: 'center' }}>
+              <Text style={styles.selectLabel}>Select your city:</Text>
+              <Select
                 data={data_city}
                 onSelect={(value) => setSelectedCity(value)}
                 value={selectedCity}
                 config={config}
                 placeholder={"City"}
-                    />
+              />
             </View>
 
-          <TouchableOpacity
-            style={styles.RegButton}
-            onPress={() => {
-              Register();
-            }}
-          >
-            <Text style={styles.buttonText}>Confirm</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.RegButton}
+              onPress={() => {
+                Register();
+              }}
+            >
+              <Text style={styles.buttonText}>Confirm</Text>
+            </TouchableOpacity>
 
-          <Text>Already have an account?</Text>
+            <Text>Already have an account?</Text>
+          </View>
         </View>
-      </View>
-    </LinearGradient>
+      </LinearGradient>
 
 
 
@@ -311,114 +291,98 @@ const [show, setShow] = useState(false);
       </Text> */}
     </SafeAreaView>
   );
-    }
-    const styles = StyleSheet.create({
-      container: {
-        marginTop:140,
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-      },
-      background: {
-        width: "100%",
-        height: "100%",
-        position: "relative",
-      },
-      heading: {
-        alignSelf:'center',
-        fontSize:30,
-        color: "#8736AA",
-      },
-      input: {
-        alignSelf:'center',
-        borderWidth: 1,
-        marginBottom: 10,
-        backgroundColor:'#dadada',
-        borderColor: '#dadada',
-        borderRadius: 30,
-        padding: 5,
-        height:40,
-        width:300,
-        paddingHorizontal:15,
-      },
-      logoTxt: {
-        fontWeight: "600",
-        fontSize: 20,
-        color: "white",
-      },
-      registerBtn: {
-        borderWidth: 1,
-        borderColor: "white",
-        borderRadius: 30,
-        padding: 15,
-      },
+}
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  background: {
+    width: "100%",
+    height: "100%",
+    position: "relative",
+  },
+  heading: {
+    alignSelf: 'center',
+    fontSize: 30,
+    color: "#8736AA",
+  },
+  input: {
+    alignSelf: 'center',
+    borderWidth: 1,
+    marginBottom: 10,
+    backgroundColor: '#dadada',
+    borderColor: '#dadada',
+    borderRadius: 30,
+    padding: 5,
+    height: 40,
+    width: 300,
+  },
+  logoTxt: {
+    fontWeight: "600",
+    fontSize: 20,
+    color: "white",
+  },
+  registerBtn: {
+    borderWidth: 1,
+    borderColor: "white",
+    borderRadius: 30,
+    padding: 15,
+  },
 
-      section: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-      },
-      selected: {
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        width: 105,
-        height: 30,
-        margin: 5,
-        borderRadius: 15,
-        backgroundColor: "#bd2aba",
-      },
-      button: {
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        width: 100,
-        height: 30,
-        backgroundColor: "#d9d9da",
-        margin: 5,
-        borderRadius: 15,
-      },
-      icon: {
-        width: 18,
-        height: 18,
-        marginRight: 10,
-      },
-      RegButton: {
-        alignSelf:"center",
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 18,
-        width: 300,
-        backgroundColor: "#bd2aba",
-        height: 40,
-        marginTop: 20,
-        marginBottom: 50,
-      },
-      buttonText: {
-        color: "white",
-        fontSize: 20,
-      },
-      labels: {
-        color: '#606060',
-        marginBottom: 5,
-        fontSize: 17,
-        marginLeft: 40,
-    
-      },
-      datePickerButton:{
-        alignSelf:"center",
-        justifyContent: "center",
-        borderRadius: 18,
-        width: 300,
-        backgroundColor: "#dadada",
-        height: 40,
-        marginTop: 10,
-        marginBottom: 10,
-      },
-      datePickerText:{
-        color: 'grey',
-        marginLeft: 15,
-      },
-    });
-    
+  section: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+  },
+  selected: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 105,
+    height: 30,
+    margin: 5,
+    borderRadius: 15,
+    backgroundColor: "#bd2aba",
+  },
+  button: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 100,
+    height: 30,
+    backgroundColor: "#d9d9da",
+    margin: 5,
+    borderRadius: 15,
+  },
+  icon: {
+    width: 18,
+    height: 18,
+    marginRight: 10,
+  },
+  RegButton: {
+    alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 18,
+    width: 300,
+    backgroundColor: "#bd2aba",
+    height: 40,
+    marginTop: 20,
+    marginBottom: 50,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 20,
+  },
+  labels: {
+    color: '#606060',
+    marginBottom: 5,
+    fontSize: 17,
+    marginLeft: 40,
+
+  },
+});
+

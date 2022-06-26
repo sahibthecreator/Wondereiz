@@ -17,6 +17,8 @@ import AppNavigator from "./AppNavigator";
 //using DB reference
 import { app, db } from "./Config";
 
+
+
 export default function App() {
   var [userDoc, setUserDoc] = useState(null);
   var [text, setText] = useState("");
@@ -131,6 +133,7 @@ export default function App() {
     // </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

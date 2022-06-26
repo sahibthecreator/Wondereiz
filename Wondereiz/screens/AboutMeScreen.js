@@ -17,11 +17,11 @@ import {
 import Slider from "@react-native-community/slider";
 
 export default function AboutMe(props) {
+  const [preferredAge, setPreferredAge] = useState("15");
   const userUid = app.auth().currentUser.uid; 
   let [bio, setBio] = useState("");
   let [preference, setPreference] = useState("");
   let [error, setError] = useState("");
-  const [preferredAge, setPreferredAge] = useState("15");
 
   function Validate() {
     if (bio == "" || preference == "") {
@@ -46,9 +46,6 @@ export default function AboutMe(props) {
     };
 
     setDoc(myDoc, docData, { merge: true })
-      .then(() => {
-        console.log("Profile Updated!");
-      })
       .catch((error) => {
         console.log(error.message);
       });
@@ -58,7 +55,7 @@ export default function AboutMe(props) {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => props.navigation.navigate('Register')}>
+          <TouchableOpacity onPress={() => props.navigation.goBack()}>
             <Image style={{width: 30, height: 30}} source={require("../assets/arrow.png")}/>
           </TouchableOpacity>
           <Text style={styles.caption}>About Me</Text>
@@ -79,21 +76,21 @@ export default function AboutMe(props) {
           <Text style={styles.gender}>Gender</Text>
           <View style={styles.section}>
             <TouchableOpacity
-              style={preference === "male" ? styles.selected : styles.button}
+              style={(preference === "male") ? styles.selected : styles.button}
               onPress={(preference) => setPreference("male")}
             >
               <Image style={styles.icon} source={require("../assets/male_icon.png")}/>
               <Text style={styles.btnText}>Male</Text>
             </TouchableOpacity>
             <TouchableOpacity 
-              style={preference === "female" ? styles.selected : styles.button}
+              style={(preference === "female") ? styles.selected : styles.button}
               onPress={(preference) => setPreference("female")}
             >
               <Image style={styles.icon} source={require("../assets/female_icon.png")}/>
               <Text style={styles.btnText}>Female</Text>
             </TouchableOpacity>
             <TouchableOpacity 
-              style={preference === "Not specified" ? styles.selected : styles.button}
+              style={(preference === "Not specified") ? styles.selected : styles.button}
               onPress={(preference) => setPreference("Not specified")}
             >
               <Text style={styles.btnText}>Not specified</Text>

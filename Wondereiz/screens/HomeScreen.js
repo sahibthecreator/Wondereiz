@@ -14,6 +14,7 @@ import { app, db } from "../Config";
 import Post from "../components/Post"
 import "firebase/compat/firestore";
 import { useCollectionData } from "react-firebase-hooks/firestore";
+import Loading from "../components/Loading";
 
 
 const wait = (timeout) => {
@@ -96,7 +97,7 @@ export default function Home(navigation) {
             {trips && trips.map((trp, trpIndex) => (<DisplayTrips key={trpIndex} trip={trp} />))}
           </View>
           : (
-            <Text>No trips</Text>
+            <Loading />
           )}
       </ScrollView>
       <BottomTabs navigation={navigation.navigation}></BottomTabs>

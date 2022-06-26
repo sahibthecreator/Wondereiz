@@ -1,5 +1,13 @@
 import "firebase/compat/firestore";
-import { addDoc, collection, limit, orderBy, query } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  limit,
+  orderBy,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 require("firebase/auth");
 import { app } from "../Config";
 import { db } from "../Config";
@@ -20,7 +28,7 @@ import {
   Text,
   Modal,
 } from "react-native";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import * as ImagePicker from "expo-image-picker";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -31,29 +39,64 @@ export default function Chat(props) {
   const auth = getAuth(app);
   const [user] = useAuthState(auth);
   const storage = getStorage(app);
+  let roomId = props.route.params.room.id;
+  console.log("Room id is:" + roomId);
 
-  // Create a reference to 'mountains.jpg'
-  const imageRef = ref(storage, "chat/Landscape.jpg");
+  let imageRef;
 
   const messagesRef = collection(db, "/Messages");
   const [selectedImage, setSelectedImage] = useState("");
   const [selectedImagePreview, setSelectedImagePreview] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [messages, loadingMessages, error] = useCollectionData(
-    query(messagesRef, orderBy("createdAt"), limit(100)),
-    {
-      idField: "id",
-    }
-  );
+  // const [messages, loadingMessages, error] = useCollectionData(
+  //   query(
+  //     messagesRef,
+  //     where("roomId", "==", roomId),
+  //     orderBy("createdAt")
+  //     // limit(100)
+  //   )
+  //   // query(messagesRef, orderBy("createdAt")),
+  //   // {
+  //   //   idField: "id",
+  //   // }
+  // );
+
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    getMessages();
+  }, []);
+
+  function getMessages() {
+    let messages = [];
+    let q = query(
+      collection(db, "Messages"),
+      where("roomId", "==", roomId),
+      orderBy("createdAt")
+    );
+
+    getDocs(q).then((snapshot) => {
+      if (snapshot) {
+        snapshot.docs.forEach((e) => {
+          messages.push(e.data());
+          //console.log(e.data());
+        });
+        setMessages(messages);
+      }
+    });
+  }
 
   const [formValue, setFormValue] = useState("");
 
   const sendMessage = async (e) => {
-    if (formValue.trim() != "" || selectedImage !== null) {
+    if (formValue.trim() != "" || typeof e != "object") {
       //e.preventDefault();
 
-      let date = new Date().toUTCString();
+      let date = new Date();
+      date.setTime(date.getTime() + 2 * 60 * 60 * 1000);
+      date = date.toUTCString();
+
       let time = date.substring(17, 25);
 
       const { uid } = auth.currentUser;
@@ -61,12 +104,13 @@ export default function Chat(props) {
       await addDoc(messagesRef, {
         createdAt: date,
         createdAtTime: time,
+        roomId,
         text: formValue,
         uid,
-        image: "Landscape.jpg",
+        image: typeof e != "object" ? e : null,
       });
-
       setFormValue("");
+      getMessages();
     } else {
       alert("Can't send empty message!");
     }
@@ -91,15 +135,19 @@ export default function Chat(props) {
     setSelectedImagePreview(img);
     const bytes = await img.blob();
     setSelectedImage(bytes);
-    //console.log(bytes);
     setModalVisible(!modalVisible);
   };
 
   function SendImage(file) {
-    uploadBytes(imageRef, file).then((snapshot) => {
-      console.log("Uploaded file!");
+    let date = new Date();
+    date.setTime(date.getTime() + 2 * 60 * 60 * 1000);
+    date = date.toUTCString();
+    let time = date.substring(17, 25);
+    let imageName = app.auth().currentUser.uid + roomId + time + ".jpg";
+    imageRef = ref(storage, `chat/${imageName}`);
+    uploadBytes(imageRef, file).then(() => {
+      sendMessage(imageName);
     });
-    sendMessage();
     setModalVisible(!modalVisible);
   }
 
@@ -109,7 +157,6 @@ export default function Chat(props) {
     if (image) {
       getDownloadURL(ref(storage, "chat/" + image)).then((url) => {
         setUri(url);
-        //console.log(uri);
       });
     }
     //console.log(createdAt);
@@ -181,10 +228,18 @@ export default function Chat(props) {
             style={{ flex: 1 }}
           />
         </TouchableOpacity>
-        <Text style={styles.headerTxt}>
+        <Text
+          style={styles.headerTxt}
+          onPress={() =>
+            props.navigation.navigate("GroupInfoScreen", { props, roomId })
+          }
+        >
           {props.route.params.room.cityFrom} - {props.route.params.room.cityTo}
         </Text>
-        <Image style={{width: 50, height: 50, borderRadius: 40}} source={{uri : props.route.params.room.mainPicture}}/>
+        <Image
+          style={{ width: 50, height: 50, borderRadius: 40 }}
+          source={{ uri: props.route.params.room.mainPicture }}
+        />
       </View>
       <KeyboardAvoidingView
         style={styles.displayedMessages}
@@ -192,7 +247,7 @@ export default function Chat(props) {
         //COULD ONLY BE FOR ANDROID
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -270}
       >
-        <ScrollView contentContainerStyle={{ bottom: 0 }}>
+        <ScrollView contentContainerStyle={{ top: 20 }}>
           {messages &&
             messages.map((msg, msgIndex) => (
               <ChatMessage key={msgIndex} message={msg} />
@@ -380,6 +435,7 @@ const styles = StyleSheet.create({
   },
   displayedMessages: {
     flex: 1,
+    //bottom: 100
     //justifyContent: "flex-start",
     //position: "relative",
   },
@@ -398,7 +454,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     padding: 15,
-    
+
     //justifyContent: "flex-end",
     //marginBottom: 0,
     //position: "absolute",
