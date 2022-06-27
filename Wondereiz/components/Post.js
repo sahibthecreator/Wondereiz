@@ -19,7 +19,7 @@ const tripLikeIcon = {
 const Post = ({ post }) => {
   console.log(post)
   return (
-    <TouchableOpacity style={{ marginBottom: 5 }} onPress={()=> post.navigation.navigate("TripDetails")}>
+    <TouchableOpacity style={{ marginBottom: 5 }} onPress={()=> post.navigation.navigate("TripDetails", post)}>
       <PostHeader post={post} />
       <View style={{ marginLeft: 320, marginTop: -30, alignSelf: "center" }}>
         <PostLike id={post.id} liked={post.liked} />

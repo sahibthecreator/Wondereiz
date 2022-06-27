@@ -42,6 +42,7 @@ export default function NotificationsPage(props) {
       if (snapshot) {
         snapshot.docs.forEach((e) => {
           rooms.push(e.data());
+          console.log(rooms);
         });
         Promise.all(rooms).then(() => {
           rooms.forEach((room, i) => {
@@ -55,7 +56,10 @@ export default function NotificationsPage(props) {
               if (snapshot.docs.length > 0) {
                 messages.push({
                   ...room,
-                  text: snapshot.docs[snapshot.docs.length - 1].data().text != "" ? snapshot.docs[snapshot.docs.length - 1].data().text : "New Image",
+                  text:
+                    snapshot.docs[snapshot.docs.length - 1].data().text != ""
+                      ? snapshot.docs[snapshot.docs.length - 1].data().text
+                      : "New Image",
                   senderUid: snapshot.docs[snapshot.docs.length - 1].data().uid,
                 });
                 Promise.all(messages).then(() => {
@@ -73,9 +77,9 @@ export default function NotificationsPage(props) {
                     }
                   });
                 });
-              }else{
-                results.push({...room,
-                sendersName: "No messages"})
+              } else {
+                results.push({ ...room, sendersName: "No messages" });
+                setResult(results);
               }
             });
           });

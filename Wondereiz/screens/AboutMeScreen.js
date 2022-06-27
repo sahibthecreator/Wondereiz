@@ -32,7 +32,7 @@ export default function AboutMe(props) {
     }
     else {
       Update();
-      props.navigation.navigate("ProfilePicUpload", {props});
+      props.navigation.navigate("Home");
     }
   }
 

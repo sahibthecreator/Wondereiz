@@ -1,5 +1,12 @@
 import React, { Component, useEffect, useState } from "react";
-import { Text, StyleSheet, Image, TouchableOpacity, View, Button} from "react-native";
+import {
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  View,
+  Button,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { app, db } from "../Config";
 import BottomTabs from "../components/BottomTabs";
@@ -16,7 +23,6 @@ import { ScrollView } from "react-native-gesture-handler";
 import Loading from "../components/Loading";
 
 export default function MyTrips(props) {
-
   const userUid = app.auth().currentUser.uid;
 
   let [rooms, setRooms] = useState([]);
@@ -73,14 +79,19 @@ export default function MyTrips(props) {
         });
     } else {
       setFavourite(false);
-      q = query(collection(db, "Room"), where("adminUid", "==", userUid));
+      q = query(collection(db, "Room"), where("adminUserUid", "==", userUid));
       onSnapshot(q, (snapshot) => {
         let tempRooms = [];
         snapshot.docs.forEach((doc) => {
           tempRooms.push(doc.data());
         });
+        q = query(collection(db, "Room"), where("membersUserId", "array-contains", userUid));
+        onSnapshot(q, (snapshot) => {
+          snapshot.docs.forEach((doc) => {
+            tempRooms.push(doc.data());
+          });
+        });
         setRooms(tempRooms);
-        //console.log(rooms);
       });
     }
   }
@@ -111,7 +122,7 @@ export default function MyTrips(props) {
                 trip: rooms[idx].cityFrom + " - " + rooms[idx].cityTo,
                 caption: rooms[idx].travelDate,
                 liked: favourite,
-                props: props
+                props: props,
               }}
             />
           ))

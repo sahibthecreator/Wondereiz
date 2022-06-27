@@ -11,12 +11,12 @@ import { onAuthStateChanged } from "firebase/auth";
 import { app } from "../Config";
 
 export default function Welcome(props) {
-  onAuthStateChanged(app.auth(), (user) => {
-    if (user) {
-      //alert("Signed In");
-      //props.navigation.navigate("Home", { user });
-    }
-  });
+  // onAuthStateChanged(app.auth(), (user) => {
+  //   if (user) {
+  //     //alert("Signed In");
+  //     //props.navigation.navigate("Home", { user });
+  //   }
+  // });
 
   return (
     <LinearGradient colors={["#441B55", "#b61fb5"]} style={styles.background}>

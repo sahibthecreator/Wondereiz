@@ -3,28 +3,35 @@ import { StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { app, db } from "../Config";
 import { LinearGradient } from "expo-linear-gradient";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { collection, query, where, onSnapshot, doc, getDoc } from "firebase/firestore";
 
 export default function Transition2(props) {
   //console.log("User UID: " + app.auth().currentUser.uid);
   //const userUid = app.auth().currentUser.uid;
   //let userUid = "xEsNZgf2J0vQMaUx0hLi";
 
+  //setTimeout(() => {  props.navigation.navigate("Home") }, 1500);
+
   let [user, setUser] = useState([]);
 
-  let q = query(collection(db, "User", userUid));
+  let q = doc(db, "User", app.auth().currentUser.uid);
 
-  onSnapshot(q, (snapshot) => {
-    let users = [];
-    snapshot.docs.forEach((doc) => {
-      users.push(doc.data());
-    });
-    setUser(users);
-    console.log(user);
-  });
+  getDoc(q).then((snapshot) => {
+    if(snapshot.exists)
+      setUser(snapshot.data());
+  })
+
+  // onSnapshot(q, (snapshot) => {
+  //   let users = [];
+  //   snapshot.docs.forEach((doc) => {
+  //     users.push(doc.data());
+  //   });
+  //   setUser(users);
+  //   console.log(user);
+  // });
   //let username = app.auth().currentUser.name;
   //let username = "Andrey";
-  let username = user[0]?.username;
+  let username = user?.firstName;
 
   return (
     <LinearGradient colors={["#441B55", "#b61fb5"]} style={styles.background}>

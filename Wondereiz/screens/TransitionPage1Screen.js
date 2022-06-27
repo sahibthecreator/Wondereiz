@@ -7,14 +7,11 @@ import {
   import { app } from "../Config";
   import { LinearGradient } from "expo-linear-gradient";
   import { onAuthStateChanged } from "firebase/auth";
+import { useEffect } from 'react';
   
 export default function Transition1(props) {
-  onAuthStateChanged(app.auth(), (user) => {
-    if (user) {
-      //alert("Signed In");
-      //props.navigation.navigate("TransitionPage2", { user });
-    }
-  });
+
+  setTimeout(() => {  props.navigation.navigate("ProfilePicUpload") }, 2000);
 
   return (
     <LinearGradient colors={["#441B55", "#b61fb5"]} style={styles.background}>

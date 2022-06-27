@@ -7,7 +7,7 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
 } from "firebase/auth";
-import { TextInput } from "react-native-gesture-handler";
+import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { doc, setDoc } from "firebase/firestore";
 import Select from "../components/react-native-select";
@@ -16,7 +16,8 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 //import {DatePicker} from "react-native-neat-date-picker";
 
-export default function Register() {
+export default function Register(props) {
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
@@ -98,13 +99,9 @@ export default function Register() {
         .then(() => {
           sendEmailVerification(app.auth().currentUser)
             .then(() => {
-              alert("Email sent");
+              //alert("Email sent");
               // Add a new document in collection "cities"
               setDoc(doc(db, "User", app.auth().currentUser.uid), {
-                // username: username,
-                // email: email,
-                // password: password,
-
                 firstName: firstName,
                 lastName: lastName,
                 email: email,
@@ -116,6 +113,7 @@ export default function Register() {
                 gender: preference,
                 city: selectedCity,
               });
+              props.navigation.navigate("TransitionPage1");
             })
             .catch((err) => alert(err.message));
         })
@@ -132,7 +130,7 @@ export default function Register() {
   }
 
   return (
-    <SafeAreaView style={{ alignItems: "center" }}>
+    <SafeAreaView style={styles.container}>
       {/*
       <TouchableOpacity
           onPress={() => props.navigation.navigate("Welcome")}
@@ -147,157 +145,158 @@ export default function Register() {
         </TouchableOpacity>
           */}
 
-      <LinearGradient colors={["white", "white"]} style={styles.background}>
-        <View style={styles.container}>
+        
           <View>
             <Text style={styles.heading}>Sign up</Text>
             {error !== "" ? <Text>{error}</Text> : null}
-            <View>
-              <Text style={styles.labels}>First name</Text>
-              <TextInput
-                style={styles.input}
-                value={firstName}
-                placeholder="First name"
-                onChangeText={(firstName) => setFirstName(firstName)}
-                placeholderTextColor="grey"
-              />
-
-              <Text style={styles.labels}>Last name</Text>
-              <TextInput
-                style={styles.input}
-                value={lastName}
-                placeholder="Last name"
-                onChangeText={(lastName) => setLastName(lastName)}
-                placeholderTextColor="grey"
-              />
-
-              <Text style={styles.labels}>Username</Text>
-              <TextInput
-                style={styles.input}
-                value={username}
-                placeholder="Choose a username"
-                onChangeText={(username) => setUsername(username)}
-                placeholderTextColor="grey"
-              />
-              <Text style={styles.labels}>E-mail address</Text>
-              <TextInput
-                style={styles.input}
-                value={email}
-                placeholder="Enter your email"
-                onChangeText={(email) => setEmail(email)}
-                placeholderTextColor="grey"
-              />
-
-              <Text style={styles.labels}>Password</Text>
-              <TextInput
-                style={styles.input}
-                value={password}
-                placeholder="Enter your password"
-                onChangeText={(password) => setPassword(password)}
-                placeholderTextColor="grey"
-              />
-
-              <Text style={styles.labels}>Confirm password</Text>
-              <TextInput
-                style={styles.input}
-                value={confirmPassword}
-                placeholder="Confirm password"
-                onChangeText={(confirmPassword) =>
-                  setConfirmPassword(confirmPassword)
-                }
-                placeholderTextColor="grey"
-              />
-            </View>
-
-            {/* Date picker*/}
-
-            <TouchableOpacity
-              onPress={showDatepicker}
-              style={styles.datePickerButton}
-            >
-              <Text style={styles.datePickerText}>
-                Select your date of birth
-              </Text>
-            </TouchableOpacity>
-            {show && (
-              <DateTimePicker
-                value={date}
-                mode={mode}
-                is24Hour={true}
-                onChange={onChange}
-              />
-            )}
-            {/*End  */}
-
-            <View style={styles.section}>
-              <TouchableOpacity
-                style={preference === "male" ? styles.selected : styles.button}
-                onPress={(preference) => setPreference("male")}
-              >
-                <Image
-                  style={styles.icon}
-                  source={require("../assets/male_icon.png")}
+            <ScrollView>
+              <View>
+                <Text style={styles.labels}>First name</Text>
+                <TextInput
+                  style={styles.input}
+                  value={firstName}
+                  placeholder="First name"
+                  onChangeText={(firstName) => setFirstName(firstName)}
+                  placeholderTextColor="grey"
                 />
-                <Text style={styles.btnText}>Male</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={
-                  preference === "female" ? styles.selected : styles.button
-                }
-                onPress={(preference) => setPreference("female")}
-              >
-                <Image
-                  style={styles.icon}
-                  source={require("../assets/female_icon.png")}
+
+                <Text style={styles.labels}>Last name</Text>
+                <TextInput
+                  style={styles.input}
+                  value={lastName}
+                  placeholder="Last name"
+                  onChangeText={(lastName) => setLastName(lastName)}
+                  placeholderTextColor="grey"
                 />
-                <Text style={styles.btnText}>Female</Text>
-              </TouchableOpacity>
+
+                <Text style={styles.labels}>Username</Text>
+                <TextInput
+                  style={styles.input}
+                  value={username}
+                  placeholder="Choose a username"
+                  onChangeText={(username) => setUsername(username)}
+                  placeholderTextColor="grey"
+                />
+                <Text style={styles.labels}>E-mail address</Text>
+                <TextInput
+                  style={styles.input}
+                  value={email}
+                  placeholder="Enter your email"
+                  onChangeText={(email) => setEmail(email)}
+                  placeholderTextColor="grey"
+                />
+
+                <Text style={styles.labels}>Password</Text>
+                <TextInput
+                  style={styles.input}
+                  value={password}
+                  placeholder="Enter your password"
+                  onChangeText={(password) => setPassword(password)}
+                  placeholderTextColor="grey"
+                />
+
+                <Text style={styles.labels}>Confirm password</Text>
+                <TextInput
+                  style={styles.input}
+                  value={confirmPassword}
+                  placeholder="Confirm password"
+                  onChangeText={(confirmPassword) =>
+                    setConfirmPassword(confirmPassword)
+                  }
+                  placeholderTextColor="grey"
+                />
+              </View>
+
+              {/* Date picker*/}
+
               <TouchableOpacity
-                style={
-                  preference === "Not specified"
-                    ? styles.selected
-                    : styles.button
-                }
-                onPress={(preference) => setPreference("Not specified")}
+                onPress={showDatepicker}
+                style={styles.datePickerButton}
               >
-                <Text style={styles.btnText}>Not specified</Text>
+                <Text style={styles.datePickerText}>
+                  Select your date of birth
+                </Text>
               </TouchableOpacity>
-            </View>
+              {show && (
+                <DateTimePicker
+                  value={date}
+                  mode={mode}
+                  is24Hour={true}
+                  onChange={onChange}
+                />
+              )}
+              {/*End  */}
 
-            {/* ---------------City Picker------------------ */}
+              <View style={styles.section}>
+                <TouchableOpacity
+                  style={
+                    preference === "male" ? styles.selected : styles.button
+                  }
+                  onPress={(preference) => setPreference("male")}
+                >
+                  <Image
+                    style={styles.icon}
+                    source={require("../assets/male_icon.png")}
+                  />
+                  <Text style={styles.btnText}>Male</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={
+                    preference === "female" ? styles.selected : styles.button
+                  }
+                  onPress={(preference) => setPreference("female")}
+                >
+                  <Image
+                    style={styles.icon}
+                    source={require("../assets/female_icon.png")}
+                  />
+                  <Text style={styles.btnText}>Female</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={
+                    preference === "Not specified"
+                      ? styles.selected
+                      : styles.button
+                  }
+                  onPress={(preference) => setPreference("Not specified")}
+                >
+                  <Text style={styles.btnText}>Not specified</Text>
+                </TouchableOpacity>
+              </View>
 
-            <View
-              style={{
-                zIndex: 200,
-                width: 300,
-                marginBottom: 8,
-                alignSelf: "center",
-              }}
-            >
-              <Dropdown
-                icon="chevron-down"
-                onChangeText={(value) => setSelectedCity(value)}
-                iconColor="#E1E1E1"
-                label="Select City from:"
-                data={data_city}
-                useNativeDriver={true}
-                dropdownPosition={-5}
-              />
-            </View>
+              {/* ---------------City Picker------------------ */}
 
-            <TouchableOpacity
-              style={styles.RegButton}
-              onPress={() => {
-                Register();
-              }}
-            >
-              <Text style={styles.buttonText}>Confirm</Text>
-            </TouchableOpacity>
+              <View
+                style={{
+                  zIndex: 200,
+                  width: 300,
+                  marginBottom: 8,
+                  alignSelf: "center",
+                }}
+              >
+                <Dropdown
+                  icon="chevron-down"
+                  onChangeText={(value) => setSelectedCity(value)}
+                  iconColor="#E1E1E1"
+                  label="Select City from:"
+                  data={data_city}
+                  useNativeDriver={true}
+                  dropdownPosition={-5}
+                />
+              </View>
 
-            <Text>Already have an account?</Text>
+              <TouchableOpacity
+                style={styles.RegButton}
+                onPress={() => {
+                  Register();
+                }}
+              >
+                <Text style={styles.buttonText}>Confirm</Text>
+              </TouchableOpacity>
+
+              <Text>Already have an account?</Text>
+            </ScrollView>
           </View>
-        </View>
-      </LinearGradient>
 
       {/* <Text onPress={() => props.navigation.navigate("TransitionPage1")}>
         TransitionPage1{" "}
@@ -320,15 +319,9 @@ export default function Register() {
 }
 const styles = StyleSheet.create({
   container: {
-    marginTop: 140,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-  },
-  background: {
-    width: "100%",
-    height: "100%",
-    position: "relative",
   },
   heading: {
     alignSelf: "center",

@@ -108,7 +108,7 @@ export default function ProfilePicUpload(props) {
           </View>
           <TouchableOpacity 
             style={styles.submit}
-            onPress={() => {(uri === null) ? setError("Please select an image!") : props.navigation.navigate('Home')}}
+            onPress={() => {(uri === null) ? setError("Please select an image!") : props.navigation.navigate("TransitionPage2")}}
           >
             <Text style={styles.submitText}>Continue</Text>
           </TouchableOpacity>

@@ -24,16 +24,17 @@ import {
 //console.log("User UID: " + app.auth().currentUser.uid);
 //const userUid = app.auth().currentUser.uid;
 //const roomId = props.navigation.getParam("roomsId", "room1");
-const userUid = "stIHaXMezOgz97wEPXVZp2gsaXD2";
-const roomId = "room9";
 
 export default function Trip_details(props) {
+  const userUid = app.auth().currentUser.uid;
+  const roomId = props.route.params.id;
+
   let [favourite, setFavourite] = useState(false);
   let [joined, setJoined] = useState(false);
   let savedRooms = [""];
   const myDoc = doc(db, "User", userUid);
 
-  let [info, setInfo] = useState([]);
+  let [info, setInfo] = useState();
   let [rooms, setRooms] = useState([]);
   let [favRooms, setFavRooms] = useState([]);
   let [joinedRooms, setJoinedRooms] = useState([]);
@@ -44,36 +45,11 @@ export default function Trip_details(props) {
     let qry = query(collection(db, "Room"), where("id", "==", roomId));
 
     onSnapshot(qry, (snapshot) => {
-      let infoRooms = [];
-      snapshot.docs.forEach((doc) => {
-        infoRooms.push(doc.data());
-      });
-      setInfo(infoRooms);
-      console.log("Room" + info[0]);
+      if (snapshot.docs.length > 0) {
+        setInfo(snapshot.docs[0].data());
+        console.log(info);
+      }
     });
-  }, []);
-
-  useEffect(() => {
-    getDoc(myDoc)
-      .then((snapshot) => {
-        if (snapshot.exists) {
-          let q = query(collection(db, "Room"), where("id", "==", roomId));
-          onSnapshot(q, (snapshot) => {
-            let savRooms = [];
-            snapshot.docs.forEach((doc) => {
-              savRooms.push(doc.data());
-              console.log(doc.data());
-            });
-            setNumOfMembers(savRooms);
-            console.log("Users:" + numOfMembers[0]);
-          });
-        } else {
-          console.log("No data");
-        }
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
   }, []);
 
   useEffect(() => {
@@ -93,11 +69,11 @@ export default function Trip_details(props) {
             setJoined(true);
           });
         } else {
-          console.log("No data");
+          //console.log("No data");
         }
       })
       .catch((error) => {
-        console.log(error.message);
+        //console.log(error.message);
       });
   }, []);
 
@@ -119,11 +95,11 @@ export default function Trip_details(props) {
             setJoined(true);
           });
         } else {
-          console.log("No data");
+          //console.log("No data");
         }
       })
       .catch((error) => {
-        console.log(error.message);
+        //console.log(error.message);
       });
   }, []);
 
@@ -146,11 +122,11 @@ export default function Trip_details(props) {
           });
           //console.log(savedRooms);
         } else {
-          console.log("No data");
+          //console.log("No data");
         }
       })
       .catch((error) => {
-        console.log(error.message);
+        //console.log(error.message);
       });
   }, []);
 
@@ -171,47 +147,50 @@ export default function Trip_details(props) {
             position: "relative",
             top: 125,
           }}
-          source={{ uri: info[0]?.mainPicture }}
+          source={{ uri: info?.mainPicture }}
         />
       </View>
       <Text style={styles.header}>
-        {info[0]?.cityFrom} - {info[0]?.cityTo}
+        {info?.cityFrom} - {info?.cityTo}
       </Text>
       <View style={styles.details}>
         <Text style={styles.details_header}>About the trip</Text>
         <Text style={styles.details_text} numberOfLines={5}>
-          {info[0]?.description}
+          {info?.description}
         </Text>
       </View>
       <View style={[styles.room]}>
         <View style={styles.date}>
           <Text style={styles.room_header}>Date</Text>
-          <Text style={styles.room_text}>{info[0]?.travelDate}</Text>
+          <Text style={styles.room_text}>{info?.travelDate}</Text>
         </View>
         <View style={styles.time}>
           <Text style={styles.room_header}>Time</Text>
-          <Text style={styles.room_text}>{info[0]?.travelTime}</Text>
+          <Text style={styles.room_text}>{info?.travelTime}</Text>
         </View>
         <View style={styles.members}>
           <Text style={styles.room_header}>Members</Text>
           <Text style={styles.room_text}>
-            {numOfMembers[0]?.membersUserId.length}/{info[0]?.maxMembers}
+            {info?.membersUserId.length}/{info?.maxMembers}
           </Text>
         </View>
         <View style={styles.age}>
           <Text style={styles.room_header}>Age</Text>
           <Text style={styles.room_text}>
-            {info[0]?.minAge}-{info[0]?.maxAge}
+            {info?.minAge}-{info?.maxAge}
           </Text>
         </View>
       </View>
-      <FavButton />
-      <JoinButton />
+      <FavButton id={roomId} />
+      <JoinButton id={roomId} />
     </SafeAreaView>
   );
 }
 
-const FavButton = ({ favourite }) => {
+const FavButton = ({ favourite, id }) => {
+  let roomId = id;
+  const userUid = app.auth().currentUser.uid;
+
   let savedRooms = [""];
   const myDoc = doc(db, "User", userUid);
 
@@ -221,13 +200,10 @@ const FavButton = ({ favourite }) => {
   const [likeText, setLikeText] = useState(unfavouriteText);
   let [savedRoom, setSavedRoom] = useState("");
   useEffect(() => {
-    console.log("useEffect called");
     setLikeText(favourite ? favouriteText : unfavouriteText);
   }, []);
 
   function Create() {
-    console.log(roomId);
-
     if (likeText == unfavouriteText) {
       setLikeText(favouriteText);
 
@@ -256,66 +232,37 @@ const FavButton = ({ favourite }) => {
   );
 };
 
-const JoinButton = ({ joined }) => {
+const JoinButton = ({ joined, id }) => {
+  const roomId = id;
+  const userUid = app.auth().currentUser.uid;
   const joinText = "You joined the trip";
   const unJoinText = "Join this trip";
   const myDoc = doc(db, "User", userUid);
 
   const [joinedText, setJoinedText] = useState(unJoinText);
   let [membersUserId, setMembersUserId] = useState("");
-  let [info, setInfo] = useState([]);
+  let [info, setInfo] = useState();
   let [numOfMembers, setNumOfMembers] = useState([]);
 
   useEffect(() => {
+    setJoinedText(joined ? joinText : unJoinText);
     let qry = query(collection(db, "Room"), where("id", "==", roomId));
 
     onSnapshot(qry, (snapshot) => {
       let infoRooms = [];
-      snapshot.docs.forEach((doc) => {
-        infoRooms.push(doc.data());
-      });
-      setInfo(infoRooms);
-      console.log("Room" + info[0]);
+      if (snapshot.docs.length > 0) {
+        setInfo(snapshot.docs[0].data());
+      }
     });
   }, []);
 
-  useEffect(() => {
-    getDoc(myDoc)
-      .then((snapshot) => {
-        if (snapshot.exists) {
-          let q = query(collection(db, "Room"), where("id", "==", roomId));
-          onSnapshot(q, (snapshot) => {
-            let savRooms = [];
-            snapshot.docs.forEach((doc) => {
-              savRooms.push(doc.data());
-              console.log(doc.data());
-            });
-            setNumOfMembers(savRooms);
-            console.log("Users:" + numOfMembers[0]);
-          });
-        } else {
-          console.log("No data");
-        }
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
-  }, []);
-
-  useEffect(() => {
-    console.log("useEffect called");
-    console.log("userId:" + userUid);
-    setJoinedText(joined ? joinText : unJoinText);
-  }, []);
   const myDocR = doc(db, "Room", roomId);
 
   function Create() {
-    console.log(userUid);
-
     if (joinedText == unJoinText) {
       setJoinedText(joinText);
 
-      if (numOfMembers[0]?.membersUserId.length < info[0]?.maxMembers) {
+      if (info.membersUserId.length < info.maxMembers) {
         updateDoc(myDocR, {
           membersUserId: arrayUnion(userUid),
         });

@@ -73,20 +73,33 @@ export default function CreateTrip(props) {
     for (var i = 0; i < 7; i++)
       id += possible.charAt(Math.floor(Math.random() * possible.length));
     const roomRef = doc(db, "Room", id);
+    let picture;
+    if(selectedCityTo == "Amsterdam")
+      picture = "https://cdn.britannica.com/30/180130-138-4FC01CDD/Overview-Amsterdam.jpg?w=800&h=450&c=crop"
+    else if(selectedCityTo == "Eindhoven")
+      picture = "http://t3.gstatic.com/licensed-image?q=tbn:ANd9GcSFmmKZAP570tzz3jLwPXqQ8CiiIEHp_icEOkZtKfXFs_h_PFuVtZePRHSfw_zUyQp3";
+    else if(selectedCityTo == "Rotterdam")
+      picture = "https://www.holland.com/upload_mm/6/1/0/75231_fullimage_skyline%20erasmus%20brug%20in%20de%20avond%20rotterdam%20partners%20foto%20guido%20pijper_1150x663.jpg"
+    else if(selectedCityTo == "The Hague")
+      picture = "https://cdn.britannica.com/89/102289-050-EF27EAA0/Hague-Neth.jpg"
+    else if(selectedCityTo == "Groningen")
+      picture = "https://www.holland.com/upload_mm/9/0/4/71078_fullimage_bocht%20van%20ameland%20groningen%20via%20marketing%20groningen.jpg"
+    else if(selectedCityTo == "Emmen")
+      picture = "https://northsearegion.eu/media/8133/emmen.jpg";
+    
     setDoc(roomRef, {
       id: id,
       adminUserUid: app.auth().currentUser.uid,
-      membersUserUid: [],
-      mainPicture:
-        "http://t3.gstatic.com/licensed-image?q=tbn:ANd9GcSFmmKZAP570tzz3jLwPXqQ8CiiIEHp_icEOkZtKfXFs_h_PFuVtZePRHSfw_zUyQp3",
+      membersUserId: [],
+      mainPicture: picture,
       description: description,
       cityFrom: selectedCityFrom,
       cityTo: selectedCityTo,
-      travelDate: `${selectedDate.getUTCDate}/${selectedDate.getUTCMonth}/${selectedDate.getUTCFullYear}`,
-      travelTime: `${time.getUTCHours}:${time.getUTCMinutes}`,
+      travelDate: `${selectedDate.getUTCDate()}/${selectedDate.getUTCMonth()}/${selectedDate.getUTCFullYear()}`,
+      travelTime: `${time.getUTCHours()}:${time.getUTCMinutes()}`,
       minAge: minAge,
       maxAge: maxAge,
-      MaxNumberPeople: selectedPeopleNum,
+      maxMembers: selectedPeopleNum,
     }).then(() => {
       Alert.alert(
         "Room was created successfully",

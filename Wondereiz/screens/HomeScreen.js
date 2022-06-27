@@ -1,25 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, SafeAreaView, StyleSheet, RefreshControl } from "react-native";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
+  RefreshControl,
+} from "react-native";
 import {
   collection,
   query,
   where,
-  doc, getDoc, onSnapshot
+  doc,
+  getDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import { ScrollView } from "react-native";
 import Header from "../components/Header";
 import BottomTabs from "../components/BottomTabs";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { app, db } from "../Config";
-import Post from "../components/Post"
+import Post from "../components/Post";
 import "firebase/compat/firestore";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import Loading from "../components/Loading";
-
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 const wait = (timeout) => {
-  return new Promise(resolve => setTimeout(resolve, timeout));
-}
+  return new Promise((resolve) => setTimeout(resolve, timeout));
+};
 
 export default function Home(navigation) {
   const [refreshing, setRefreshing] = React.useState(false);
@@ -37,20 +46,26 @@ export default function Home(navigation) {
   let savedRooms = [""];
   const myDoc = doc(db, "User", userUid);
 
-  useEffect(() => { // The function executes only once
+  useEffect(() => {
+    // The function executes only once
     getDoc(myDoc)
       .then((snapshot) => {
         if (snapshot.exists) {
           savedRooms = snapshot.data().savedRoomsId;
-          console.log(savedRooms)
+          console.log(savedRooms);
 
-          let q = query(collection(db, "Room"), where("id", "not-in", savedRooms));
+          let q = query(
+            collection(db, "Room"),
+            where("id", "not-in", savedRooms)
+          );
           onSnapshot(q, (snapshot) => {
             let tempRooms = [];
-            snapshot.docs.forEach((doc) => {
-              tempRooms.push(doc.data());
-            });
-            setTrips(tempRooms);
+            if (snapshot.docs.length > 0) {
+              snapshot.docs.forEach((doc) => {
+                tempRooms.push(doc.data());
+              });
+              setTrips(tempRooms);
+            }
             //console.log(rooms);
           });
           //console.log(savedRooms);
@@ -61,22 +76,22 @@ export default function Home(navigation) {
       .catch((error) => {
         console.log(error.message);
       });
-  }, [])
-
+  }, []);
 
   function DisplayTrips(props) {
     const { cityFrom, cityTo, id, travelDate, mainPicture } = props.trip;
 
     return (
-      <Post post={{
-        id: id,
-        trip_picture: mainPicture,
-        trip: cityFrom + " - " + cityTo,
-        //     trip: trips[0].cityFrom + " - " + trips[0].cityTo,
-        caption: travelDate,
-        navigation: navigation.navigation
-      }
-      } />
+      <Post
+        post={{
+          id: id,
+          trip_picture: mainPicture,
+          trip: cityFrom + " - " + cityTo,
+          //     trip: trips[0].cityFrom + " - " + trips[0].cityTo,
+          caption: travelDate,
+          navigation: navigation.navigation,
+        }}
+      />
     );
   }
 
@@ -85,20 +100,19 @@ export default function Home(navigation) {
       <Header />
       <ScrollView
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-
-        {trips ?
+        {trips ? (
           <View>
-            {trips && trips.map((trp, trpIndex) => (<DisplayTrips key={trpIndex} trip={trp} />))}
+            {trips &&
+              trips.map((trp, trpIndex) => (
+                <DisplayTrips key={trpIndex} trip={trp} />
+              ))}
           </View>
-          : (
-            <Loading />
-          )}
+        ) : (
+          <Loading />
+        )}
       </ScrollView>
       <BottomTabs navigation={navigation.navigation}></BottomTabs>
     </SafeAreaView>
