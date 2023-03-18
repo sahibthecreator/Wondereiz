@@ -1,2 +1,2 @@
 # Wondereiz
-Mobile application using React Native for Project 4 
+Mobile Application using React Native for travelling with groups and getting discounts in Netherlands
